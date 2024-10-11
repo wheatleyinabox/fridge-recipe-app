@@ -8,7 +8,7 @@
 6. CMD+SHIFT+P in VSCode
 7. Type `Radon IDE: Diagnostics`
 8. Click on `Open IDE Panel` and Create Android Device
-9. Once its loaded, run `npm run android`
+9. Once its loaded, run `npm install` then `npm run android`
 
 ## Team & Developers
 - [@wheatleyinabox](https://www.github.com/wheatleyinabox)
