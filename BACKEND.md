@@ -3,5 +3,5 @@
 2. go into recipes folder
 3. `npm install`
 4. add a .env based off of .env-sample
-5. `node server.js`
+5. `npm run start`
 6. run live server in vscode and click on the prompt that comes up
