@@ -1,3 +1,4 @@
+// _layout.tsx
 import {
   DarkTheme,
   DefaultTheme,
@@ -31,9 +32,12 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={colorScheme === "light" ? DarkTheme : DefaultTheme}>
       <Stack>
+        {/* Tab Layout */}
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
+        {/* Not Found Screen */}
         <Stack.Screen name="+not-found" />
       </Stack>
     </ThemeProvider>

@@ -28,12 +28,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="camera"
         options={{
-          title: "Explore",
+          title: "Camera",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "code-slash" : "code-slash-outline"}
+              name={focused ? "camera" : "camera-outline"}
               color={color}
             />
           ),
@@ -45,7 +45,7 @@ export default function TabLayout() {
           title: "Scheduler",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "scheduler" : "scheduler-outline"}
+              name={focused ? "calendar-number" : "calendar-number-outline"}
               color={color}
             />
           ),

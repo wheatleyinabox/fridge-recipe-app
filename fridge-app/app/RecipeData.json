@@ -1,0 +1,82 @@
+[
+  {
+    "label": "Chicken Salad",
+    "image": "turkey_picacata.png",
+    "calories": 350,
+    "mealType": "Lunch",
+    "ingredientLines": ["Chicken", "Lettuce", "Olives", "Tomato"],
+    "url": "https://example.com/recipe/chicken-salad"
+  },
+  {
+    "label": "DOGWATER",
+    "image": "turkey_picacata.png",
+    "calories": 350,
+    "mealType": "Lunch",
+    "ingredientLines": ["Chicken", "Lettuce", "Olives", "Tomato"],
+    "url": "https://example.com/recipe/chicken-salad"
+  },
+  {
+    "label": "BIG MEME Salad",
+    "image": "turkey_picacata.png",
+    "calories": 350,
+    "mealType": "Lunch",
+    "ingredientLines": ["Chicken", "Lettuce", "Olives", "Tomato"],
+    "url": "https://example.com/recipe/chicken-salad"
+  },
+  {
+    "label": "Chicken aa",
+    "image": "turkey_picacata.png",
+    "calories": 350,
+    "mealType": "Lunch",
+    "ingredientLines": ["Chicken", "Lettuce", "Olives", "Tomato"],
+    "url": "https://example.com/recipe/chicken-salad"
+  },
+  {
+    "label": "HALT IN THE NAME OF THE LAW",
+    "image": "turkey_picacata.png",
+    "calories": 350,
+    "mealType": "Lunch",
+    "ingredientLines": ["Chicken", "Lettuce", "Olives", "Tomato"],
+    "url": "https://example.com/recipe/chicken-salad"
+  },
+  {
+    "label": "LOREUM IP SORUM aa",
+    "image": "turkey_picacata.png",
+    "calories": 350,
+    "mealType": "Lunch",
+    "ingredientLines": ["Chicken", "Lettuce", "Olives", "Tomato"],
+    "url": "https://example.com/recipe/chicken-salad"
+  },
+  {
+    "label": "WHAT DO I SAY?",
+    "image": "turkey_picacata.png",
+    "calories": 350,
+    "mealType": "Lunch",
+    "ingredientLines": ["Chicken", "Lettuce", "Olives", "Tomato"],
+    "url": "https://example.com/recipe/chicken-salad"
+  },
+  {
+    "label": "FAKE RECIPES ",
+    "image": "turkey_picacata.png",
+    "calories": 350,
+    "mealType": "Lunch",
+    "ingredientLines": ["Chicken", "Lettuce", "Olives", "Tomato"],
+    "url": "https://example.com/recipe/chicken-salad"
+  },
+  {
+    "label": "FAKE NEWS",
+    "image": "turkey_picacata.png",
+    "calories": 350,
+    "mealType": "Lunch",
+    "ingredientLines": ["Chicken", "Lettuce", "Olives", "Tomato"],
+    "url": "https://example.com/recipe/chicken-salad"
+  },
+  {
+    "label": "ITS HUGE ",
+    "image": "turkey_picacata.png",
+    "calories": 350,
+    "mealType": "Lunch",
+    "ingredientLines": ["Chicken", "Lettuce", "Olives", "Tomato"],
+    "url": "https://example.com/recipe/chicken-salad"
+  }
+]

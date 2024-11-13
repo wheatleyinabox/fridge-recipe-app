@@ -1,23 +1,12 @@
 import AppButton from "@/components/AppButton";
 import { Colors } from "@/constants/Colors";
 import React from "react";
-import { Alert, Dimensions, StyleSheet, View } from "react-native";
+import { Text, Dimensions, StyleSheet, View } from "react-native";
 
-export default function main_page() {
+export default function cameraScreen() {
   return (
     <View style={styles.container}>
-      <AppButton
-        title="Scanner"
-        onPress={() => Alert.alert("Scanner Button Pressed")}
-      />
-      <AppButton
-        title="Planner"
-        onPress={() => Alert.alert("Planner Button Pressed")}
-      />
-      <AppButton
-        title="Scheduler"
-        onPress={() => Alert.alert("Scheduler Button Pressed")}
-      />
+      <Text>camera page</Text>
     </View>
   );
 }
