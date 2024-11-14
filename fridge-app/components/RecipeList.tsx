@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import RecipeCard from "./RecipeCard"; // Adjust path based on where RecipeCard is located
 import recipesData from "../app/RecipeData.json"; // Import recipes data
+import { StatusBar } from "expo-status-bar";
 
 const RecipeList: React.FC = () => {
   const itemsPerPage = 10; // Number of recipes to load per scroll
@@ -56,6 +57,8 @@ const RecipeList: React.FC = () => {
         } // Show loading spinner when fetching more data
         // Added this style for testing scrollable area
         contentContainerStyle={{ paddingBottom: 20 }}
+        ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
@@ -65,7 +68,6 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     flex: 1,
-    paddingTop: 50,
     paddingHorizontal: 10, // Optional: Add padding on sides as well
     backgroundColor: "#f8f8f8",
     justifyContent: "center",

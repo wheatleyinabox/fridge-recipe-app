@@ -18,9 +18,13 @@ const RecipeCard: React.FC<{ recipe: any }> = ({ recipe }) => {
           <Image source={imageSource} style={styles.image} />
         </View>
         <View style={styles.textContainer}>
-          <Text style={styles.title}>{recipe.label}</Text>
-          <Text style={styles.calories}>{recipe.calories} calories</Text>
-          <Text style={styles.mealType}>{recipe.mealType}</Text>
+          <View style={styles.textTitle}>
+            <Text style={styles.title}>{recipe.label}</Text>
+          </View>
+          <View style={styles.textDescription}>
+            <Text style={styles.mealType}>{recipe.mealType}</Text>
+            <Text style={styles.calories}>{recipe.calories} calories</Text>
+          </View>
         </View>
       </View>
     </Link>
@@ -33,8 +37,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: 315,
     height: 115,
-    backgroundColor: "green",
-    marginBottom: 20,
   },
 
   imageContainer: { flex: 1, margin: 10 },
@@ -45,19 +47,25 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     display: "flex",
-    alignItems: "flex-end",
     flex: 2,
   },
-
+  textTitle: {
+    alignItems: "flex-start",
+  },
   title: {
     fontSize: 15,
     fontWeight: "bold",
+  },
+  textDescription: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
   calories: {
     fontSize: 16,
     color: "#555",
   },
-  mealType: { fontSize: 13 },
+  mealType: { fontSize: 16 },
 });
 
 export default RecipeCard;
