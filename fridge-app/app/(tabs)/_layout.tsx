@@ -52,6 +52,18 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="MealPlanner"
+        options={{
+          title: "MealPlanner",
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "list" : "list-outline"}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="RecipeDetail"
         options={{
           title: "Details",

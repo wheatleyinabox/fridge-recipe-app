@@ -43,7 +43,7 @@
     "label": "LOREUM IP SORUM aa",
     "image": "turkey_picacata.png",
     "calories": 350,
-    "mealType": "Lunch",
+    "mealType": "Breakfast",
     "ingredientLines": ["Chicken", "Lettuce", "Olives", "Tomato"],
     "url": "https://example.com/recipe/chicken-salad"
   },
@@ -51,7 +51,7 @@
     "label": "WHAT DO I SAY?",
     "image": "turkey_picacata.png",
     "calories": 350,
-    "mealType": "Lunch",
+    "mealType": "Dinner",
     "ingredientLines": ["Chicken", "Lettuce", "Olives", "Tomato"],
     "url": "https://example.com/recipe/chicken-salad"
   },

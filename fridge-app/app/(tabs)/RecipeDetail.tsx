@@ -31,9 +31,11 @@ const RecipeDetail = () => {
     );
   }
 
+  const imageSource = require("../../assets/images/turkey_picacata.png");
+
   return (
     <ScrollView style={styles.container}>
-      <Image source={{ uri: recipe.image }} style={styles.image} />
+      <Image source={imageSource} style={styles.image} />
       <Text style={styles.title}>{recipe.label}</Text>
       <Text style={styles.calories}>{recipe.calories} calories</Text>
       <Text style={styles.mealType}>Meal Type: {recipe.mealType}</Text>
