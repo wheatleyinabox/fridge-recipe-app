@@ -8,9 +8,8 @@ import {
 } from "react-native";
 import RecipeCard from "./RecipeCard"; // Adjust path based on where RecipeCard is located
 import recipesData from "../app/RecipeData.json"; // Import recipes data
-import { StatusBar } from "expo-status-bar";
 
-const RecipeList: React.FC = () => {
+const RecipeList: React.FC = ({ searchQuery }) => {
   const itemsPerPage = 10; // Number of recipes to load per scroll
   const [data, setData] = useState<any[]>([]); // The data to display in the list
   const [isLoading, setIsLoading] = useState(false); // Loading state for pagination
@@ -44,10 +43,15 @@ const RecipeList: React.FC = () => {
     }, 1500); // Simulate loading delay
   };
 
+  // Filter recipes based on the search query
+  const filteredData = data.filter((recipe) =>
+    recipe.label.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <View style={styles.container}>
       <FlatList
-        data={data} // List of recipes
+        data={filteredData} // List of recipes
         keyExtractor={(item) => item.label} // Unique key for each recipe
         renderItem={({ item }) => <RecipeCard recipe={item} />} // Render each recipe card
         onEndReached={fetchMoreData} // Trigger when the user reaches the end
@@ -72,6 +76,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f8f8",
     justifyContent: "center",
     alignItems: "center",
+    paddingTop: 10,
   },
 });
 
