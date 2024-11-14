@@ -28,24 +28,24 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="camera"
+        name="RecipeDetail"
         options={{
-          title: "Camera",
+          title: "Details",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "camera" : "camera-outline"}
+              name={focused ? "newspaper" : "newspaper-outline"}
               color={color}
             />
           ),
         }}
       />
       <Tabs.Screen
-        name="Scheduler"
+        name="camera"
         options={{
-          title: "Scheduler",
+          title: "Camera",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "calendar-number" : "calendar-number-outline"}
+              name={focused ? "camera" : "camera-outline"}
               color={color}
             />
           ),
@@ -63,13 +63,14 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
-        name="RecipeDetail"
+        name="Scheduler"
         options={{
-          title: "Details",
+          title: "Scheduler",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "newspaper" : "newspaper-outline"}
+              name={focused ? "calendar-number" : "calendar-number-outline"}
               color={color}
             />
           ),

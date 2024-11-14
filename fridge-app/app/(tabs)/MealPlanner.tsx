@@ -22,7 +22,6 @@ const MealPlanner: React.FC = () => {
       <Text
         style={{
           fontSize: 24,
-          fontWeight: "bold",
           textAlign: "center",
           marginVertical: 10,
         }}
@@ -40,7 +39,7 @@ const MealPlanner: React.FC = () => {
         data={filteredRecipes}
         keyExtractor={(item) => item.label}
         renderItem={({ item }) => <RecipeCard recipe={item} />}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ padding: 20, alignSelf: "center" }}
         ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
         showsVerticalScrollIndicator={false}
       />

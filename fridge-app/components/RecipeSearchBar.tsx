@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
   },
   searchBarContainer: {
     backgroundColor: "transparent",
+    borderColor: "#f8f8f8",
   },
   searchInputContainer: {
     backgroundColor: "#e0e0e0",
@@ -73,14 +74,14 @@ const styles = StyleSheet.create({
   },
   selectedMealTypeButton: {
     borderBottomWidth: 2,
-    borderBottomColor: "#007AFF",
+    borderBottomColor: "#A9DFA3",
   },
   mealTypeText: {
     fontSize: 16,
-    color: "#555",
+    color: "#1A1C1B",
   },
   selectedMealTypeText: {
-    color: "#007AFF",
+    color: "#1A1C1B",
     fontWeight: "bold",
   },
 });

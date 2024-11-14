@@ -1,4 +1,3 @@
-import AppButton from "@/components/AppButton";
 import { Colors } from "@/constants/Colors";
 import React from "react";
 import { Text, Dimensions, StyleSheet, View } from "react-native";

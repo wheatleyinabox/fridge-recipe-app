@@ -14,17 +14,15 @@ const App: React.FC = () => {
       <View>
         <Text style={styles.textTitle}>FRIDGE CHEF</Text>
       </View>
-      <View style={styles.searchBarOuter}>
-        <SearchBar
-          placeholder="Search..."
-          onChangeText={updateSearch}
-          value={searchQuery}
-          platform="default" // Optional: Use "android", "ios", or "default"
-          containerStyle={styles.searchBarContainer}
-          inputContainerStyle={{ backgroundColor: "#f8f8f8" }}
-          round={true}
-        />
-      </View>
+      <SearchBar
+        placeholder="Search..."
+        onChangeText={updateSearch}
+        value={searchQuery}
+        platform="default" // Optional: Use "android", "ios", or "default"
+        containerStyle={styles.searchBarContainer}
+        inputContainerStyle={styles.searchInputContainer}
+        round={true}
+      />
       <RecipeList searchQuery={searchQuery} />
     </View>
   );
@@ -35,6 +33,19 @@ const styles = StyleSheet.create({
     flex: 1,
     display: "flex",
     flexDirection: "column",
+    backgroundColor: "#f8f8f8",
+  },
+  searchBarContainer: {
+    backgroundColor: "transparent",
+    width: "100%",
+    paddingLeft: 50,
+    paddingRight: 50,
+    alignSelf: "center",
+    borderColor: "#f8f8f8",
+  },
+  searchInputContainer: {
+    backgroundColor: "#e0e0e0",
+    borderRadius: 8,
   },
   textTitle: {
     fontSize: 48,
@@ -43,16 +54,6 @@ const styles = StyleSheet.create({
     color: Colors.light.secondary,
     padding: 20,
     backgroundColor: "#f8f8f8",
-  },
-  searchBarOuter: {
-    backgroundColor: "#f8f8f8",
-  },
-  searchBarContainer: {
-    width: 300,
-    backgroundColor: "",
-    padding: -10,
-    borderBlockColor: "#D0D0D0",
-    alignSelf: "center",
   },
 });
 
