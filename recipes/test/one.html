@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Function Output</title>
+</head>
+<body>
+    <h1>Function Outputs from scripts.js</h1>
+
+    <div id="searchRecipesOutput">
+        <h2>searchRecipes Output:</h2>
+        <pre id="searchRecipesResult"></pre>
+    </div>
+
+    <div id="CheckRemainingIngredientsOutput">
+        <h2>CheckRemainingIngredients Output:</h2>
+        <pre id="CheckRemainingIngredientsResult"></pre>
+    </div>
+
+    <div id="getMLOutputsOutput">
+        <h2>getMLOutputs Output:</h2>
+        <pre id="getMLOutputsResult"></pre>
+    </div>
+
+    <div id="checkOkayClickOutput">
+        <h2>checkOkayClick Output:</h2>
+        <pre id="checkOkayClickResult"></pre>
+    </div>
+
+    <div id="checkIfRecipeSelectedOutput">
+        <h2>checkIfRecipeSelected Output:</h2>
+        <pre id="checkIfRecipeSelectedResult"></pre>
+    </div>
+
+    <div id="MakeFinalWeeklyListOutput">
+        <h2>MakeFinalWeeklyList Output:</h2>
+        <pre id="MakeFinalWeeklyListResult"></pre>
+    </div>
+
+    <script src="scripts.js"></script>
+    <script>
+        // Assuming the functions are already defined in scripts.js
+    
+        // Output for searchRecipes (await the async function)
+        const getSearchRecipesOutput = async () => {
+            const searchRecipesOutput = await searchRecipes('Chicken, Lettuce'); // Pass ingredients
+            document.getElementById('searchRecipesResult').textContent = JSON.stringify(searchRecipesOutput, null, 2);
+        };
+        getSearchRecipesOutput();
+    
+        // Output for CheckRemainingIngredients
+        const apiRecipes = [
+            { ingredientLines: ['Chicken', 'Lettuce', 'Tomato'] },
+            { ingredientLines: ['Chicken', 'Spinach'] }
+        ];
+        const ingredients = 'Chicken, Lettuce';
+        const checkRemainingIngredientsOutput = CheckRemainingIngredients(apiRecipes, ingredients);
+        document.getElementById('CheckRemainingIngredientsResult').textContent = JSON.stringify(checkRemainingIngredientsOutput, null, 2);
+    
+        // Output for getMLOutputs
+        const remainingIngredients = [{ ingredient: 'Tomato' }];
+        getMLOutputs(remainingIngredients, []).then(data => {
+            document.getElementById('getMLOutputsResult').textContent = data;
+        });
+    
+        // Output for checkOkayClick
+        document.getElementById('checkOkayClickResult').textContent = `okay: ${checkOkayClick('okay')}, cancel: ${checkOkayClick('cancel')}`;
+    
+        // Output for checkIfRecipeSelected
+        const checkboxValList = [true, false, true];
+        const finalRecipes = ['Recipe 1', 'Recipe 2', 'Recipe 3'];
+        const selectedRecipes = checkIfRecipeSelected(checkboxValList, finalRecipes);
+        document.getElementById('checkIfRecipeSelectedResult').textContent = JSON.stringify(selectedRecipes, null, 2);
+    
+        // Output for MakeFinalWeeklyList
+        const finalWeeklyList = ['Recipe 1', 'Recipe 2'];
+        const weeklyCalendar = MakeFinalWeeklyList(finalWeeklyList);
+        document.getElementById('MakeFinalWeeklyListResult').textContent = JSON.stringify(weeklyCalendar, null, 2);
+    </script>
+</body>
+</html>

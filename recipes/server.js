@@ -14,20 +14,20 @@ app.get('/', (req, res) => {
 
 app.get('/recipes/:query', async (req, res) => {
     try {
-        const response = await axios.get(
-            `https://api.edamam.com/api/recipes/v2?type=public&q=${req.params.query}&app_id=${process.env.THEIR_APP_ID}&app_key=${process.env.THEIR_API_KEY}&field=label&field=image&field=url&field=ingredients&field=ingredientLines&field=calories&field=mealType`
-            // `https://api.edamam.com/search?q=${req.params.query}&app_id=${process.env.THEIR_APP_ID}&app_key=${process.env.THEIR_API_KEY}&field=label&field=image&field=url&field=ingredients&field=calories&field=mealType`
-        )
-        // console.log(response.data.hits)
-        // shows the hidden ingredients attribute which shows each ingredient with quantity. for parsing purposes
-        // console.log(response.data.hits[0].recipe.ingredients)
-        res.json(response.data.hits)
-        console.log("Amount returned: " + response.data.count)
+        const query = req.params.query; // Get query from URL
+        const response = await axios.get(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${process.env.THEIR_APP_ID}&app_key=${process.env.THEIR_API_KEY}`);
+        const recipes = response.data.hits;
+
+        // Optional: Send the ingredients list for further processing by ML model
+        const mlResults = await getMLOutputs(recipes); // Function to fetch ML-based recipes
+
+        res.json({ recipes, mlResults });
     } catch (error) {
-        console.error(error)
-        res.status(500).send('Error fetching recipes')
+        console.error(error);
+        res.status(500).send('Error fetching recipes');
     }
-})
+});
+
 
 app.get('/random-recipes', async (req, res) => {
     try {
