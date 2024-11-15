@@ -1,12 +1,10 @@
-import AppButton from "@/components/AppButton";
 import { Colors } from "@/constants/Colors";
 import React from "react";
 import { Text, Dimensions, StyleSheet, View } from "react-native";
-
 export default function scheduleScreen() {
   return (
     <View style={styles.container}>
-      <Text>schedule page</Text>
+      <Text>Hello Scheduler</Text>
     </View>
   );
 }

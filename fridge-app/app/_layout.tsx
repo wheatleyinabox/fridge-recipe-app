@@ -38,7 +38,7 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
         {/* Not Found Screen */}
-        <Stack.Screen name="+not-found" />
+        <Stack.Screen name="RecipeDetails" />
       </Stack>
     </ThemeProvider>
   );

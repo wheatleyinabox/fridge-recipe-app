@@ -27,18 +27,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="RecipeDetail"
-        options={{
-          title: "Details",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "newspaper" : "newspaper-outline"}
-              color={color}
-            />
-          ),
-        }}
-      />
+
       <Tabs.Screen
         name="camera"
         options={{

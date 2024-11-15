@@ -1,37 +1,27 @@
 import React from "react";
-import { View, Text, Image, ScrollView, StyleSheet, Alert } from "react-native";
-import { useLocalSearchParams } from "expo-router";
-const RecipeDetail = () => {
-  const { recipe: recipeParam } = useLocalSearchParams();
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Button,
+} from "react-native";
 
-  // Ensure recipeParam is a string (in case it's an array, use the first element)
-  const recipeString = Array.isArray(recipeParam)
-    ? recipeParam[0]
-    : recipeParam;
-
-  // Initialize recipe as null in case there's an issue with the parameter
-  let recipe = null;
-
-  // Check if recipeString is valid and parse it
-  try {
-    if (recipeString) {
-      recipe = JSON.parse(recipeString);
-    }
-  } catch (error) {
-    console.error("Error parsing recipe data:", error);
-    Alert.alert("Error", "There was a problem loading the recipe details.");
-  }
-
-  // If no recipe data is available, show an error message
+const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
+  recipe,
+  onClose,
+}) => {
   if (!recipe) {
     return (
       <View style={styles.container}>
         <Text style={styles.error}>Recipe details not available.</Text>
+        <Button title="Close" onPress={onClose} />
       </View>
     );
   }
 
-  const imageSource = require("../../assets/images/turkey_picacata.png");
+  const imageSource = require("../assets/images/turkey_picacata.png");
 
   return (
     <ScrollView style={styles.container}>
@@ -47,6 +37,7 @@ const RecipeDetail = () => {
       ))}
       <Text style={styles.sectionTitle}>Full Recipe:</Text>
       <Text style={styles.url}>{recipe.url}</Text>
+      <Button title="Close" onPress={onClose} />
     </ScrollView>
   );
 };
