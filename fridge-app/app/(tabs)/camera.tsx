@@ -4,6 +4,7 @@ import {
   Button,
   Dimensions,
   Modal,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -27,7 +28,6 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-
       <View style={styles.banner}>
         <Text style={styles.title}>Need to scan something?</Text>
       </View>
@@ -37,7 +37,9 @@ export default function App() {
       </Text>
 
       <View style={styles.buttonContainer}>
-        <Button title="Upload Image" onPress={openModal} />
+        <Pressable style={styles.button} onPress={openModal}>
+          <Text style={styles.title}>Upload Image</Text>
+        </Pressable>
       </View>
 
       <Modal
@@ -48,14 +50,16 @@ export default function App() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalText}>Upload your image here!</Text>
-            <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>Close</Text>
+            <Text style={styles.modalTitle}>Success!</Text>
+            <Text style={styles.modalText}>
+              Do you need to scan more images?
+            </Text>
+            <TouchableOpacity onPress={closeModal} style={styles.button}>
+              <Text style={styles.closeButtonText}>No continue</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
-
     </View>
   );
 }
@@ -100,11 +104,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     elevation: 10, // Adds shadow for Android
   },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    paddingBottom: 10,
+  },
   modalText: {
     fontSize: 18,
     marginBottom: 20,
   },
-  closeButton: {
+  button: {
     padding: 10,
     backgroundColor: "#5B795D",
     borderRadius: 5,
@@ -112,5 +121,5 @@ const styles = StyleSheet.create({
   closeButtonText: {
     color: "#fff",
     fontWeight: "bold",
-  }
+  },
 });
