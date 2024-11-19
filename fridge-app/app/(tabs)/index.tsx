@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     backgroundColor: "#f8f8f8",
+    paddingTop: 25,
   },
   searchBarContainer: {
     backgroundColor: "transparent",
