@@ -67,3 +67,43 @@ function displayRandomRecipes(recipes) {
         randomRecipesContainer.appendChild(recipeDiv);
     });
 }
+
+async function scanImage() {
+    const fileInput = document.getElementById('imageInput');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert('Please select an image file.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+        const response = await fetch('http://localhost:5000/scanner', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        // Use the result to search for recipes
+        const ingredients = parseIngredients(data.result);
+
+        document.getElementById('ingredients').value = ingredients;
+
+    } catch (error) {
+        console.error('Error scanning image:', error);
+    }
+}
+
+function parseIngredients(result) {
+    // Assuming the result is in the format "count;item"
+    const lines = result.trim().split('\n');
+    const ingredients = lines.map(line => {
+        const parts = line.split(';');
+        return parts[1] ? parts[1].trim() : '';
+    });
+    return ingredients.filter(ingredient => ingredient).join(',');
+}
