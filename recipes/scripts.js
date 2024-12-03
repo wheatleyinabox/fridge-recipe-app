@@ -1,5 +1,3 @@
-
-
 // Function to search recipes based on ingredients
 async function searchRecipes() {
     const ingredients = document.getElementById('ingredients').value;
