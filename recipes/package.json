@@ -19,5 +19,9 @@
     "nodemon": "^3.1.7"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "babel-jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  }
 }

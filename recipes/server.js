@@ -18,7 +18,7 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
 const app = express()
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5001
 
 app.use(cors())
 
@@ -33,7 +33,6 @@ app.get('/recipes/:query', async (req, res) => {
         let recipes = [];
         let subsetCount = 1;
 
-        // Keep splitting until recipes are found or max 4 subsets
         while (recipes.length === 0 && subsetCount <= 4) {
             const subsets = [];
             const subsetSize = Math.ceil(ingredients.length / subsetCount);
@@ -42,9 +41,9 @@ app.get('/recipes/:query', async (req, res) => {
                 subsets.push(ingredients.slice(i, i + subsetSize));
             }
 
-            // Query the API with each subset
             const promises = subsets.map(subset => {
                 const query = subset.join(',');
+                console.log(`Requesting Edamam API with query: ${query}`);  // Log the query being sent
                 return axios.get(
                     `https://api.edamam.com/api/recipes/v2?type=public&q=${encodeURIComponent(query)}&app_id=${process.env.THEIR_APP_ID}&app_key=${process.env.THEIR_API_KEY}&field=label&field=image&field=url&field=ingredients&field=ingredientLines&field=calories&field=mealType`
                 );
@@ -53,7 +52,6 @@ app.get('/recipes/:query', async (req, res) => {
             const responses = await Promise.all(promises);
             recipes = responses.flatMap(r => r.data.hits);
 
-            // If no recipes found, increase the subset count
             if (recipes.length === 0) {
                 subsetCount++;
             } else {
@@ -65,10 +63,11 @@ app.get('/recipes/:query', async (req, res) => {
         console.log("Amount returned: " + recipes.length);
         console.log("Subset count: " + subsetCount)
     } catch (error) {
-        console.error(error);
+        console.error('Error occurred:', error);  // Log the error for better debugging
         res.status(500).send('Error fetching recipes');
     }
 });
+
 
 app.get('/random-recipes', async (req, res) => {
     try {
@@ -119,4 +118,7 @@ app.post('/scanner', upload.single('image'), async (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`)
+    console.log('Edamam API ID:', process.env.THEIR_APP_ID);
+    console.log('Edamam API Key:', process.env.THEIR_API_KEY);
+
 })

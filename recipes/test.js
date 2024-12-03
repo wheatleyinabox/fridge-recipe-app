@@ -1,79 +1,63 @@
-const APP_ID = 'ebf10032';
-const APP_KEY = '29824b3239d06e87e823b7448fa383aa';
-
-async function testCheckRemainingIngredients() {
-    const outputDiv = document.getElementById('output');
-    outputDiv.innerHTML = '<p>Running CheckRemainingIngredients test...</p>';
-
-    try {
-        const ingredients = 'eggs, milk';
-        const response = await fetch('http://localhost:5001/recipes/' + ingredients);
-        const apiRecipes = await response.json();
-
-        const result = CheckRemainingIngredients(apiRecipes, ingredients);
-        outputDiv.innerHTML = '<h2>CheckRemainingIngredients Results</h2>' +
-            result.map(({ recipe, missingIngredients }) => `
-                <div class="recipe">
-                    <h3>${recipe.label}</h3>
-                    <p><strong>Missing Ingredients:</strong> ${missingIngredients.join(', ')}</p>
-                </div>
-            `).join('');
-    } catch (error) {
-        console.error('Error:', error);
-        outputDiv.innerHTML = `<p>Error running test: ${error.message}</p>`;
+// Mock data
+const mockRecipes = [
+    {
+        label: "Pancakes",
+        ingredientLines: ["eggs", "milk", "flour", "sugar"],
+        calories: 500,
+        mealType: ["Breakfast"],
+        image: "pancake.jpg",
+        url: "https://example.com/pancakes"
+    },
+    {
+        label: "Omelette",
+        ingredientLines: ["eggs", "milk", "cheese"],
+        calories: 300,
+        mealType: ["Breakfast"],
+        image: "omelette.jpg",
+        url: "https://example.com/omelette"
     }
+];
+
+// Function to check remaining ingredients (missing ingredients only)
+function CheckRemainingIngredients(apiRecipes, ingredients) {
+    const userIngredients = ingredients.toLowerCase().split(',').map(ing => ing.trim());
+    return apiRecipes.map(recipe => {
+        const missingIngredients = recipe.ingredientLines.filter(
+            ingredient => !userIngredients.some(userIng => ingredient.toLowerCase().includes(userIng))
+        );
+        return { missingIngredients }; // Return only the missing ingredients
+    });
 }
 
-async function testFinalRecipeGenerator() {
-    const outputDiv = document.getElementById('output');
-    outputDiv.innerHTML = '<p>Running FinalRecipeGenerator test...</p>';
-
-    try {
-        const ingredients = 'eggs, milk';
-        const response = await fetch('http://localhost:5001/recipes/' + ingredients);
-        const apiRecipes = await response.json();
-
-        const remainingIngredients = CheckRemainingIngredients(apiRecipes, ingredients);
-        const finalRecipes = finalRecipeGenerator(apiRecipes);
-
-        outputDiv.innerHTML = '<h2>FinalRecipeGenerator Results</h2>' +
-            finalRecipes.map(recipe => `
-                <div class="recipe">
-                    <h3>${recipe.label}</h3>
-                    <p><strong>Calories:</strong> ${recipe.calories}</p>
-                </div>
-            `).join('');
-    } catch (error) {
-        console.error('Error:', error);
-        outputDiv.innerHTML = `<p>Error running test: ${error.message}</p>`;
-    }
+// Mock function for getMLOutputs (for final recipe generation)
+function getMLOutputs(remainingIngredients, apiRecipes) {
+    return remainingIngredients.map((item, index) => {
+        return {
+            recipe: apiRecipes[index], // Include full recipe
+            missingIngredients: item.missingIngredients // Missing ingredients
+        };
+    });
 }
 
-async function testGetMLOutputs() {
-    const outputDiv = document.getElementById('output');
-    outputDiv.innerHTML = '<p>Running GetMLOutputs test...</p>';
-
-    try {
-        const ingredients = 'eggs, milk';
-        const response = await fetch('http://localhost:5001/recipes/' + ingredients);
-        const apiRecipes = await response.json();
-
-        const remainingIngredients = CheckRemainingIngredients(apiRecipes, ingredients);
-        const mlRecipes = await getMLOutputs(remainingIngredients, apiRecipes);
-
-        outputDiv.innerHTML = '<h2>GetMLOutputs Results</h2>' +
-            mlRecipes.map(recipe => `
-                <div class="recipe">
-                    <h3>${recipe.label}</h3>
-                    <p><strong>Calories:</strong> ${recipe.calories}</p>
-                </div>
-            `).join('');
-    } catch (error) {
-        console.error('Error:', error);
-        outputDiv.innerHTML = `<p>Error running test: ${error.message}</p>`;
-    }
+// Function to generate final recipes (full recipe + missing ingredients)
+function finalRecipeGenerator(apiRecipes, ingredients) {
+    const remainingIngredients = CheckRemainingIngredients(apiRecipes, ingredients);  // Get remaining ingredients
+    // Return full recipes along with missing ingredients
+    return getMLOutputs(remainingIngredients, apiRecipes);
 }
 
-document.getElementById('testCheckRemainingIngredients').addEventListener('click', testCheckRemainingIngredients);
-document.getElementById('testFinalRecipeGenerator').addEventListener('click', testFinalRecipeGenerator);
-document.getElementById('testGetMLOutputs').addEventListener('click', testGetMLOutputs);
+// Testing Remaining Ingredients (Only missing ingredients)
+document.getElementById('testRemainingIngredientsButton').addEventListener('click', () => {
+    const ingredients = document.getElementById('ingredients').value;
+    const result = CheckRemainingIngredients(mockRecipes, ingredients);  // Get missing ingredients for each recipe
+    // Display only missing ingredients
+    document.getElementById('remainingIngredients').innerText = JSON.stringify(result, null, 2);
+});
+
+// Testing Final Recipe Generator (Full recipe + missing ingredients)
+document.getElementById('testFinalRecipeGeneratorButton').addEventListener('click', () => {
+    const ingredients = document.getElementById('ingredients').value;
+    const finalRecipes = finalRecipeGenerator(mockRecipes, ingredients);  // Generate final recipes with missing ingredients
+    // Display the final recipes with both full ingredient list and missing ingredients
+    document.getElementById('finalRecipes').innerText = JSON.stringify(finalRecipes, null, 2);
+});

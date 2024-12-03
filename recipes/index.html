@@ -3,105 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipe Generator Test</title>
+    <title>Recipe Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+    </style>
 </head>
 <body>
-    <h1>Recipe Generator Test</h1>
-    <input type="text" id="ingredient" placeholder="Enter ingredient">
-    <button onclick="testSearchRecipes()">Fetch Recipes</button>
-
-    <button onclick="testShowRandomRecipes()">Show Random Recipes</button>
-
-    <div id="results">
-        <p>Showing results here...</p>
-    </div>
-
-    <button onclick="testScanImage()">Test scanImage</button>
-    <button onclick="testCheckRemainingIngredients()">Test CheckRemainingIngredients</button>
-    <button onclick="testGetMLOutputs()">Test getMLOutputs</button>
-
-    <script>
-        // Function to search recipes based on an ingredient
-        async function searchRecipes(ingredient = "tomato") {
-            try {
-                const response = await fetch(`http://192.168.1.20:5001/recipes/${ingredient}`);
-                const data = await response.json();
-
-                const formattedData = data.map(recipe => ({
-                    label: recipe.label,
-                    image: recipe.image,
-                    calories: Math.round(recipe.calories),
-                    mealType: recipe.mealType.join(', '),
-                    ingredientLines: recipe.ingredientLines,
-                    url: recipe.url
-                }));
-
-                const finalList = finalRecipeGenerator(formattedData);
-                displayResults(finalList);
-            } catch (error) {
-                console.error("Error in searchRecipes:", error);
-            }
-        }
-
-        function finalRecipeGenerator(apiRecipes) {
-            // For now, return the original recipes
-            return apiRecipes.map(recipe => ({ ...recipe }));
-        }
-
-        function displayResults(recipes) {
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = ''; // Clear previous results
-            recipes.forEach(recipe => {
-                const recipeDiv = document.createElement('div');
-                recipeDiv.className = 'recipe';
-                recipeDiv.innerHTML = `
-                    <h3>${recipe.label}</h3>
-                    <img src="${recipe.image}" alt="${recipe.label}" style="width: 100px; height: 100px;">
-                    <p><strong>Ingredients:</strong></p>
-                    <ul>
-                        ${recipe.ingredientLines.map(ingredient => `<li>${ingredient}</li>`).join('')}
-                    </ul>
-                    <p><strong>Calories:</strong> ${recipe.calories}</p>
-                    <p><strong>Meal Type:</strong> ${recipe.mealType}</p>
-                    <p><strong>Directions:</strong> <a href="${recipe.url}" target="_blank">Recipe Link</a></p>
-                `;
-                resultsDiv.appendChild(recipeDiv);
-            });
-        }
-
-        // Function to show random recipes
-        async function showRandomRecipes(count = 1) {
-            try {
-                const response = await fetch(`http://localhost:5001/random-recipes?count=${count}`);
-                const recipes = await response.json();
-                displayResults(recipes);
-            } catch (error) {
-                console.error("Error fetching random recipes:", error);
-            }
-        }
-
-        // Dummy Test Functions
-        function testSearchRecipes() {
-            const ingredient = document.getElementById('ingredient').value || "tomato";
-            searchRecipes(ingredient);
-        }
-
-        function testShowRandomRecipes() {
-            showRandomRecipes(1);
-        }
-
-        function testScanImage() {
-            console.log("Scan Image test function clicked.");
-        }
-
-        function testCheckRemainingIngredients() {
-            console.log("Check Remaining Ingredients test function clicked.");
-        }
-
-        function testGetMLOutputs() {
-            console.log("Get ML Outputs test function clicked.");
-        }
-    </script>
+    <h1>Test Recipe Functions</h1>
+    
+    <label for="ingredients">Ingredients (comma-separated):</label>
+    <input type="text" id="ingredients" value="flour, eggs">
+    
+    <!-- Switched the button order -->
+    <button id="testFinalRecipeGeneratorButton">Test Final Recipe Generator</button>
+    <div id="finalRecipes"></div>
+    
+    <button id="testRemainingIngredientsButton">Test Remaining Ingredients</button>
+    <div id="remainingIngredients"></div>
+    
+    <script src="test.js"></script>
 </body>
 </html>
+
 
