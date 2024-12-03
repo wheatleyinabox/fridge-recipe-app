@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import {
-  Alert,
-  Button,
   Dimensions,
   Modal,
   Pressable,
@@ -9,13 +7,56 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Image
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
 
 export default function App() {
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [savedImageUri, setSavedImageUri] = useState("");
 
-  const uploadImage = () => {
-    Alert.alert("Button pressed!");
+  const saveImage = async (uri: string) => {
+    try {
+      const fileName = uri.split("/").pop();
+      const newPath = `${FileSystem.documentDirectory}images/${fileName}`;
+      
+      console.log("File path created: " + newPath);
+      setSavedImageUri(newPath);
+      console.log("Saved image URI:", savedImageUri);
+
+      await FileSystem.makeDirectoryAsync(FileSystem.documentDirectory + "images", { intermediates: true });
+      await FileSystem.copyAsync({
+        from: uri,
+        to: newPath,
+      });
+
+      console.log("Image saved into app!");
+      setModalTitle("Success");
+    } 
+    catch (error) 
+    {
+      console.error("Error saving image:", error);
+      setModalTitle("Failure");
+    }
+  };
+
+  const selectImage = async () => {
+    let image = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!image.canceled) {
+      const uri = image.assets[0].uri;
+      saveImage(uri);
+      openModal();
+    } else {
+      setModalTitle("Failure");
+      openModal();
+    }
   };
 
   const openModal = () => {
@@ -37,7 +78,7 @@ export default function App() {
       </Text>
 
       <View style={styles.buttonContainer}>
-        <Pressable style={styles.button} onPress={openModal}>
+        <Pressable style={styles.button} onPress={selectImage}>
           <Text style={styles.title}>Upload Image</Text>
         </Pressable>
       </View>
@@ -50,12 +91,22 @@ export default function App() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Success!</Text>
+            <Text style={styles.modalTitle}>{modalTitle}</Text>
             <Text style={styles.modalText}>
-              Do you need to scan more images?
+              {modalTitle === "Success"
+                ? "Image uploaded successfully!"
+                : "Failed to upload image."}
             </Text>
+
+            {savedImageUri ? ( // Conditionally render the image
+              <Image
+                source={{uri: savedImageUri}}
+                style={styles.image}
+              />
+            ) : null}
+
             <TouchableOpacity onPress={closeModal} style={styles.button}>
-              <Text style={styles.closeButtonText}>No continue</Text>
+              <Text style={styles.closeButtonText}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -122,4 +173,9 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
+  image: {
+    width: 200, 
+    height: 200, 
+    paddingBottom: 20,
+  }
 });
