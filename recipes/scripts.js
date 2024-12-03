@@ -151,7 +151,8 @@ async function getMLOutputs(remainingIngredients, apiRecipes) {
         const ingredientsList = remainingIngredients.map(ri => ri.ingredient).join(', ');
 
         // Call the ML model to suggest recipes
-        const response = await fetch(`http://localhost:5000/recipes/${ingredientsList},${apiRecipes}`);
+        const response = await fetch(`http://localhost:5000/recipes/${ingredientsList}apiRecipes=${apiRecipes}`);
+
         const data = await response.json();
 
         // Assuming data contains the recipe suggestions from the ML model
