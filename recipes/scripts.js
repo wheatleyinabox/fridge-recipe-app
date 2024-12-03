@@ -86,7 +86,7 @@ function displayRandomRecipes(recipes) {
     });
 }
 
-function finalRecipeGenerator(apiRecipes){
+function finalRecipeGenerator(apiRecipes) {
     const remainingIngredients = CheckRemainingIngredients(apiRecipes, ingredients);
     finalRecipes = getMLOutputs(remainingIngredients, apiRecipes);
     return finalRecipes;
@@ -151,7 +151,7 @@ async function getMLOutputs(remainingIngredients, apiRecipes) {
         const ingredientsList = remainingIngredients.map(ri => ri.ingredient).join(', ');
 
         // Call the ML model to suggest recipes
-        const response = await fetch(`http://localhost:5000/recipes/${ingredientsList}apiRecipes=${apiRecipes}`);
+        const response = await fetch(`http://localhost:5001/recipes/${ingredientsList}apiRecipes=${apiRecipes}`);
 
         const data = await response.json();
 
