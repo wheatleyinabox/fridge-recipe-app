@@ -18,7 +18,7 @@ def generate_recipe(ingredients, recipes):
     """
     prompt = (
     f"Based on these ingredients: {ingredients}, and these recipes with the most already utilized ingredients: {recipes}, "
-    "suggest a few recipes that focus on using the remaining unused ingredients from the fridge. "
+    "suggest a few recipes(which should also include atleast a few recipes that I already gave in the final returned output) that focus on using the remaining unused ingredients from the fridge. "
     "Customize the recipes based on dietary preferences if keywords like 'vegetarian' or 'eggless' are mentioned. "
     "For each recipe, include the following details in the response: "
     "- Recipe name (label), "
