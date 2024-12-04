@@ -9,6 +9,7 @@ import {
   Alert,
   Modal,
   TouchableOpacity,
+  Linking, // Import Linking
 } from "react-native";
 
 const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
@@ -45,11 +46,20 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
     }
   };
 
+  const handleLinkPress = (url: string) => {
+    Linking.openURL(url).catch((err) =>
+      console.error("Failed to open URL", err)
+    );
+  };
+
   return (
     <ScrollView style={styles.container}>
       <Image source={imageSource} style={styles.image} />
       <Text style={styles.title}>{recipe.label}</Text>
-      <Text style={styles.calories}>{recipe.calories} calories</Text>
+      <Text style={styles.calories}>
+        {" "}
+        {recipe.calories.toFixed(0)} calories
+      </Text>
       <Text style={styles.mealType}>Meal Type: {recipe.mealType}</Text>
       <Text style={styles.sectionTitle}>Ingredients:</Text>
       {recipe.ingredientLines.map((ingredient: string, index: number) => (
@@ -57,8 +67,9 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
           • {ingredient}
         </Text>
       ))}
-      <Text style={styles.sectionTitle}>Full Recipe:</Text>
-      <Text style={styles.url}>{recipe.url}</Text>
+      <TouchableOpacity onPress={() => handleLinkPress(recipe.url)}>
+        <Text style={styles.url}>View Full Recipe</Text>
+      </TouchableOpacity>
       <Button title="Close" onPress={onClose} />
       <Button title="Save Recipe!" onPress={() => setModalVisible(true)} />
 

@@ -22,6 +22,7 @@ export default function App() {
       const fileName = uri.split("/").pop();
       const newPath = `${FileSystem.documentDirectory}images/${fileName}`;
 
+      console.log("PENEWpath LOCATION HERE LOCATION HERE!@#!@#", newPath);
       setSavedImageUri(newPath);
 
       const jsonFilePath = `${FileSystem.documentDirectory}savedImages.json`;

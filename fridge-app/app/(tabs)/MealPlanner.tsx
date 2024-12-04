@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, FlatList, Text, Modal, StyleSheet } from "react-native";
+import { View, FlatList, Text, Modal, StyleSheet, Button } from "react-native";
 import RecipeSearchBar from "../../components/RecipeSearchBar";
 import RecipeCard from "../../components/RecipeCard";
 import recipesData from "../RecipeData.json";
@@ -10,8 +10,11 @@ const MealPlanner: React.FC = () => {
   const [selectedMealType, setSelectedMealType] = useState("Breakfast");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
+  const [selectedRecipes, setSelectedRecipes] = useState<any[]>([]);
 
-  const filteredRecipes = recipesData.filter((recipe) => {
+  // Filter recipes based on search query and meal type
+  const filteredRecipes = recipesData.filter((item) => {
+    const recipe = item.recipe; // Access the recipe object
     const matchesSearch = recipe.label
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
@@ -31,6 +34,15 @@ const MealPlanner: React.FC = () => {
     setSelectedRecipe(null);
   };
 
+  // Function to handle meal selection (up to 7)
+  const selectMeal = (recipe: any) => {
+    if (selectedRecipes.length < 7) {
+      setSelectedRecipes((prev) => [...prev, recipe]);
+    } else {
+      alert("You can only select up to 7 meals.");
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>
@@ -45,9 +57,13 @@ const MealPlanner: React.FC = () => {
       />
       <FlatList
         data={filteredRecipes}
-        keyExtractor={(item) => item.label}
+        keyExtractor={(item) => item.recipe.label} // Access the recipe's label for the key
         renderItem={({ item }) => (
-          <RecipeCard recipe={item} onPress={() => openModal(item)} />
+          <RecipeCard
+            recipe={item.recipe} // Pass the recipe object to RecipeCard
+            onPress={() => openModal(item.recipe)} // Pass the recipe object to the modal
+            onSelect={() => selectMeal(item.recipe)} // Pass the recipe object to the selectMeal function
+          />
         )}
         contentContainerStyle={styles.listContainer}
         ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
@@ -63,8 +79,23 @@ const MealPlanner: React.FC = () => {
       >
         <View style={styles.modalContainer}>
           <RecipeDetail recipe={selectedRecipe} onClose={closeModal} />
+          <Button title="Close" onPress={closeModal} />
         </View>
       </Modal>
+
+      {/* Selected Meals Section */}
+      <View style={styles.selectedMealsContainer}>
+        <Text style={styles.selectedMealsHeader}>Selected Meals:</Text>
+        {selectedRecipes.length > 0 ? (
+          selectedRecipes.map((recipe, index) => (
+            <Text key={index} style={styles.selectedMeal}>
+              {recipe.label}
+            </Text>
+          ))
+        ) : (
+          <Text style={styles.selectedMeal}>No meals selected yet.</Text>
+        )}
+      </View>
     </View>
   );
 };
@@ -90,6 +121,19 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
     justifyContent: "center",
     padding: 20,
+  },
+  selectedMealsContainer: {
+    padding: 20,
+    backgroundColor: "#f8f8f8",
+    marginTop: 20,
+  },
+  selectedMealsHeader: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  selectedMeal: {
+    fontSize: 16,
+    marginVertical: 5,
   },
 });
 

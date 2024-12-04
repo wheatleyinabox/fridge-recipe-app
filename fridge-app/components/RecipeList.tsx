@@ -11,17 +11,19 @@ import recipesData from "../app/RecipeData.json";
 import RecipeDetail from "./RecipeDetail";
 
 const RecipeList: React.FC<{ searchQuery: string }> = ({ searchQuery }) => {
-  const itemsPerPage = 10;
-  const [data, setData] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
+  const itemsPerPage = 10; // Number of recipes per page
+  const [data, setData] = useState<any[]>([]); // State to store recipe data
+  const [isLoading, setIsLoading] = useState(false); // Loading state for pagination
+  const [page, setPage] = useState(1); // Current page for pagination
+  const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
+  const [selectedRecipe, setSelectedRecipe] = useState<any>(null); // Selected recipe for modal
 
+  // Function to fetch more data for pagination
   useEffect(() => {
     fetchMoreData();
-  }, []);
+  }, []); // Empty dependency array means this runs once when the component mounts
 
+  // Fetch more data (pagination logic)
   const fetchMoreData = () => {
     if (isLoading) return;
     setIsLoading(true);
@@ -38,18 +40,30 @@ const RecipeList: React.FC<{ searchQuery: string }> = ({ searchQuery }) => {
         setPage((prevPage) => prevPage + 1);
       }
       setIsLoading(false);
-    }, 1500);
+    }, 1500); // Simulate a delay to fetch more data
   };
 
-  const filteredData = data.filter((recipe) =>
-    recipe.label.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filter recipes based on the search query
+  const filteredData = data.filter((item) => {
+    const recipe = item.recipe;
+    return (
+      recipe.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      recipe.ingredientLines.some((ingredient: string) =>
+        ingredient.toLowerCase().includes(searchQuery.toLowerCase())
+      ) ||
+      recipe.mealType.some((meal: string) =>
+        meal.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+  });
 
+  // Open the modal to show recipe details
   const openModal = (recipe: any) => {
     setSelectedRecipe(recipe);
     setIsModalVisible(true);
   };
 
+  // Close the modal
   const closeModal = () => {
     setIsModalVisible(false);
     setSelectedRecipe(null);
@@ -59,9 +73,12 @@ const RecipeList: React.FC<{ searchQuery: string }> = ({ searchQuery }) => {
     <View style={styles.container}>
       <FlatList
         data={filteredData}
-        keyExtractor={(item) => item.label}
+        keyExtractor={(item) => item.recipe.label} // Use the recipe label as the key
         renderItem={({ item }) => (
-          <RecipeCard recipe={item} onPress={() => openModal(item)} />
+          <RecipeCard
+            recipe={item.recipe}
+            onPress={() => openModal(item.recipe)}
+          />
         )}
         onEndReached={fetchMoreData}
         onEndReachedThreshold={0.5}
@@ -92,17 +109,15 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     flex: 1,
+    alignItems: "center",
     paddingHorizontal: 10,
     backgroundColor: "#f8f8f8",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingTop: 10,
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
     justifyContent: "center",
-    padding: 20,
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 });
 
