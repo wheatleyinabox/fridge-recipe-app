@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import {
+import 
+{
   Dimensions,
   Modal,
   Pressable,
@@ -7,7 +8,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Image
+  Image,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
@@ -21,12 +22,37 @@ export default function App() {
     try {
       const fileName = uri.split("/").pop();
       const newPath = `${FileSystem.documentDirectory}images/${fileName}`;
-      
-      console.log("File path created: " + newPath);
-      setSavedImageUri(newPath);
-      console.log("Saved image URI:", savedImageUri);
 
-      await FileSystem.makeDirectoryAsync(FileSystem.documentDirectory + "images", { intermediates: true });
+      setSavedImageUri(newPath);
+
+      const jsonFilePath = `${FileSystem.documentDirectory}savedImages.json`;
+      let imageData = [];
+
+      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
+      if (fileInfo.exists) {
+        const existingData = await FileSystem.readAsStringAsync(jsonFilePath);
+        imageData = JSON.parse(existingData);
+      }
+
+      imageData.push({
+        uri: newPath,
+        date: new Date().toISOString(),
+      });
+
+      await FileSystem.writeAsStringAsync(
+        jsonFilePath,
+        JSON.stringify(imageData)
+      );
+      console.log("Image URI saved to JSON:", jsonFilePath);
+
+      // PRINT JSON FOR VERIFICATION
+      verifyJsonFile();
+
+      // DISPLAY IMAGE FOR VERIFICATION
+      await FileSystem.makeDirectoryAsync(
+        FileSystem.documentDirectory + "images",
+        { intermediates: true }
+      );
       await FileSystem.copyAsync({
         from: uri,
         to: newPath,
@@ -34,11 +60,21 @@ export default function App() {
 
       console.log("Image saved into app!");
       setModalTitle("Success");
-    } 
-    catch (error) 
-    {
+    } catch (error) {
       console.error("Error saving image:", error);
       setModalTitle("Failure");
+    }
+  };
+
+  const verifyJsonFile = async () => {
+    const jsonFilePath = `${FileSystem.documentDirectory}savedImages.json`;
+    const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
+
+    if (fileInfo.exists) {
+      const data = await FileSystem.readAsStringAsync(jsonFilePath);
+      console.log("Saved JSON data:", JSON.parse(data));
+    } else {
+      console.log("No JSON file found.");
     }
   };
 
@@ -99,10 +135,7 @@ export default function App() {
             </Text>
 
             {savedImageUri ? ( // Conditionally render the image
-              <Image
-                source={{uri: savedImageUri}}
-                style={styles.image}
-              />
+              <Image source={{ uri: savedImageUri }} style={styles.image} />
             ) : null}
 
             <TouchableOpacity onPress={closeModal} style={styles.button}>
@@ -174,8 +207,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   image: {
-    width: 200, 
-    height: 200, 
+    width: 200,
+    height: 200,
     paddingBottom: 20,
-  }
+  },
 });
