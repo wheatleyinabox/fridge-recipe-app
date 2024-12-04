@@ -68,6 +68,21 @@ app.get('/recipes/:query', async (req, res) => {
     }
 });
 
+app.get('/remaining-ingredients/:query', async (req, res) => {
+    try {
+        const ingredients = req.params.query.split(',');  // Split ingredients into an array
+        const remainingIngredients = ingredients.filter(ingredient => ingredient.trim().length > 0);
+        
+        res.json({ remainingIngredients });  // Return remaining ingredients or any necessary data
+    } catch (error) {
+        console.error('Error fetching remaining ingredients:', error);
+        res.status(500).send('Error processing remaining ingredients');
+    }
+});
+
+
+
+
 
 app.get('/random-recipes', async (req, res) => {
     try {
@@ -114,6 +129,8 @@ app.post('/scanner', upload.single('image'), async (req, res) => {
         res.status(500).send('Error processing the image');
     }
 });
+
+
 
 
 app.listen(PORT, () => {

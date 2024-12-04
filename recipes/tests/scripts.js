@@ -84,11 +84,7 @@ function displayRandomRecipes(recipes) {
     });
 }
 
-function finalRecipeGenerator(apiRecipes, ingredients) {
-    const remainingIngredients = CheckRemainingIngredients(apiRecipes, ingredients);
-    finalRecipes = getMLOutputs(remainingIngredients, apiRecipes);
-    return finalRecipes;
-  }
+
   
 
 //Scanner for the image 
@@ -132,17 +128,47 @@ function parseIngredients(result) {
     return ingredients.filter(ingredient => ingredient).join(',');
 }
 
-// Function to check remaining ingredients based on user's input
 function CheckRemainingIngredients(apiRecipes, ingredients) {
-    const userIngredients = ingredients.toLowerCase().split(',').map(ing => ing.trim());
-    // For each recipe, determine missing ingredients without changing original check logic
     return apiRecipes.map(recipe => {
-        const missingIngredients = recipe.ingredientLines.filter(
-            ingredient => !userIngredients.some(userIng => ingredient.toLowerCase().includes(userIng))
+        // Extract the ingredient names from the ingredient objects
+        const ingredientNames = recipe.ingredients.map(ingredient => ingredient.text.toLowerCase());
+
+        // Find missing ingredients by comparing with user's ingredients
+        const missingIngredients = ingredientNames.filter(ingredient =>
+            !ingredients.some(userIng => ingredient.includes(userIng.toLowerCase()))
         );
-        return { recipe, missingIngredients };
+
+        console.log('Recipe:', recipe.label, 'Missing Ingredients:', missingIngredients);  // Log for debugging
+
+        return { 
+            recipe: recipe,
+            missingIngredients: missingIngredients
+        };
     });
 }
+
+// Final Recipe Generator function to process API response
+function finalRecipeGenerator(apiRecipes) {
+    const ingredients = document.getElementById('ingredients').value.split(',').map(i => i.trim());
+    const remainingIngredients = CheckRemainingIngredients(apiRecipes, ingredients);
+
+    // Display the recipes and their missing ingredients in the UI
+    const output = remainingIngredients.map(item => {
+        return `
+            <div>
+                <h3>${item.recipe.label}</h3>
+                <img src="${item.recipe.image}" alt="${item.recipe.label}" />
+                <p>Missing Ingredients: ${item.missingIngredients.join(', ') || 'None'}</p>
+                <a href="${item.recipe.url}" target="_blank">Recipe Link</a>
+            </div>
+        `;
+    }).join('');
+
+    // Insert the output into the DOM
+    document.getElementById('finalRecipes').innerHTML = output;
+}
+
+
 
 async function getMLOutputs(remainingIngredients, apiRecipes) {
     try {

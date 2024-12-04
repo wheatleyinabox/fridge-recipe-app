@@ -1,63 +1,85 @@
-// Mock data
-const mockRecipes = [
-    {
-        label: "Pancakes",
-        ingredientLines: ["eggs", "milk", "flour", "sugar"],
-        calories: 500,
-        mealType: ["Breakfast"],
-        image: "pancake.jpg",
-        url: "https://example.com/pancakes"
-    },
-    {
-        label: "Omelette",
-        ingredientLines: ["eggs", "milk", "cheese"],
-        calories: 300,
-        mealType: ["Breakfast"],
-        image: "omelette.jpg",
-        url: "https://example.com/omelette"
-    }
-];
+document.getElementById('testFinalRecipeGeneratorButton').addEventListener('click', function() {
+    const ingredients = document.getElementById('ingredients').value;  // Get the ingredients from the input field
+    const query = encodeURIComponent(ingredients); // Prepare the query string
 
-// Function to check remaining ingredients (missing ingredients only)
+    // Fetch data from the API
+    fetch(`http://localhost:5001/recipes/${query}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();  // Assuming the response is JSON
+        })
+        .then(data => {
+            console.log("API Response: ", data);  // Log the raw response for debugging
+
+            if (Array.isArray(data)) {
+                const finalRecipes = finalRecipeGenerator(data, ingredients); // Pass the recipes data and ingredients
+                // Display the final recipes
+                document.getElementById('finalRecipes').innerHTML = finalRecipes;
+            } else {
+                throw new Error('API response is not an array of recipes');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);  // Log the error for debugging
+            document.getElementById('finalRecipes').textContent = 'Error: ' + error.message;
+        });
+});
+
+// Final Recipe Generator function to process API response
+function finalRecipeGenerator(apiRecipes, ingredientsInput) {
+    const ingredients = ingredientsInput.split(',').map(i => i.trim().toLowerCase());  // Normalize the input ingredients
+    const remainingIngredients = CheckRemainingIngredients(apiRecipes, ingredients);
+    return getMLOutputs(remainingIngredients, apiRecipes, ingredients);
+}
+
+// Check remaining ingredients function
 function CheckRemainingIngredients(apiRecipes, ingredients) {
-    const userIngredients = ingredients.toLowerCase().split(',').map(ing => ing.trim());
-    return apiRecipes.map(recipe => {
-        const missingIngredients = recipe.ingredientLines.filter(
-            ingredient => !userIngredients.some(userIng => ingredient.toLowerCase().includes(userIng))
+    return apiRecipes.filter(recipe => 
+        recipe.ingredients && Array.isArray(recipe.ingredients) &&
+        recipe.ingredients.some(ingredient => ingredients.includes(ingredient.food.toLowerCase()))
+    );
+}
+
+function getMLOutputs(remainingIngredients, apiRecipes, inputIngredients) {
+    // Process each recipe to find missing ingredients
+    const missingIngredients = apiRecipes.map(recipe => {
+        // Ensure recipe and ingredients exist
+        if (!recipe || !recipe.recipe.ingredients) {
+            console.log('Skipping recipe without ingredients:', recipe);
+            return null;  // Skip recipes with no ingredients
+        }
+
+        // Convert recipe ingredients to lowercase for consistent comparison
+        const recipeIngredients = recipe.recipe.ingredients.map(ingredient => ingredient.food.toLowerCase());
+
+        // Find missing ingredients by filtering out those that are in the input ingredients
+        const missing = recipeIngredients.filter(ingredient => 
+            !inputIngredients.some(input => input.toLowerCase() === ingredient)
         );
-        return { missingIngredients }; // Return only the missing ingredients
-    });
+
+        // Only return recipes with missing ingredients
+        if (missing.length > 0) {
+            return { 
+                recipeTitle: recipe.recipe.label, 
+                allIngredients: recipeIngredients, 
+                missingIngredients: missing 
+            };
+        }
+
+        return null;  // Return null if no ingredients are missing
+    }).filter(recipe => recipe !== null);  // Remove null entries from the final list
+
+    // Create a readable output listing all ingredients and the missing ones
+    const formattedMissingIngredients = missingIngredients.map(recipe => {
+        return `${recipe.recipeTitle}:\nAll Ingredients: ${recipe.allIngredients.join(', ')}\nMissing Ingredients: ${recipe.missingIngredients.join(', ')}\n`;
+    }).join('\n');
+
+    // Log and display the missing ingredients
+    console.log("All Missing Ingredients: ", formattedMissingIngredients);
+    document.getElementById('remainingIngredients').textContent = formattedMissingIngredients || "No missing ingredients.";
 }
 
-// Mock function for getMLOutputs (for final recipe generation)
-function getMLOutputs(remainingIngredients, apiRecipes) {
-    return remainingIngredients.map((item, index) => {
-        return {
-            recipe: apiRecipes[index], // Include full recipe
-            missingIngredients: item.missingIngredients // Missing ingredients
-        };
-    });
-}
 
-// Function to generate final recipes (full recipe + missing ingredients)
-function finalRecipeGenerator(apiRecipes, ingredients) {
-    const remainingIngredients = CheckRemainingIngredients(apiRecipes, ingredients);  // Get remaining ingredients
-    // Return full recipes along with missing ingredients
-    return getMLOutputs(remainingIngredients, apiRecipes);
-}
 
-// Testing Remaining Ingredients (Only missing ingredients)
-document.getElementById('testRemainingIngredientsButton').addEventListener('click', () => {
-    const ingredients = document.getElementById('ingredients').value;
-    const result = CheckRemainingIngredients(mockRecipes, ingredients);  // Get missing ingredients for each recipe
-    // Display only missing ingredients
-    document.getElementById('remainingIngredients').innerText = JSON.stringify(result, null, 2);
-});
-
-// Testing Final Recipe Generator (Full recipe + missing ingredients)
-document.getElementById('testFinalRecipeGeneratorButton').addEventListener('click', () => {
-    const ingredients = document.getElementById('ingredients').value;
-    const finalRecipes = finalRecipeGenerator(mockRecipes, ingredients);  // Generate final recipes with missing ingredients
-    // Display the final recipes with both full ingredient list and missing ingredients
-    document.getElementById('finalRecipes').innerText = JSON.stringify(finalRecipes, null, 2);
-});
