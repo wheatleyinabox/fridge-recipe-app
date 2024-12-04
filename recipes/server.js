@@ -187,7 +187,7 @@ app.get('/recipes/:ingredients', async (req, res) => {
     const recipes = "[]"; // Placeholder for existing recipes
 
     try {
-        const recipeData = await generateRecipe(ingredients, recipes);
+        const recipeData = await generateRecipes(ingredients, recipes); //fix something here so its being checked and printed
         if (recipeData) {
             res.json({ recipes: JSON.parse(recipeData) });
         } else {
