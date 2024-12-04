@@ -7,23 +7,127 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        h1 {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h2 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px 0;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #finalRecipes, #remainingIngredients {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .recipe {
+            margin-bottom: 15px;
+        }
+
+        .recipe-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .ingredients, .missing-ingredients {
+            font-size: 16px;
+            margin-left: 20px;
+        }
+
+        .missing-ingredients {
+            color: #D32F2F;
+            font-weight: bold;
+        }
+
+        .section-title {
+            font-weight: bold;
+            color: #4CAF50;
+            margin-top: 10px;
+        }
+
+        .ingredients-section {
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
+
     <h1>Test Recipe Functions</h1>
-    
-    <label for="ingredients">Ingredients (comma-separated):</label>
-    <input type="text" id="ingredients" value="flour, eggs">
-    
-    <!-- Button to trigger the recipe generator -->
-    <button id="testFinalRecipeGeneratorButton">Test Final Recipe Generator</button>
-    <div id="finalRecipes"></div>
-    
-    <!-- Button to trigger remaining ingredients display -->
-    <button id="testRemainingIngredientsButton">Test Remaining Ingredients</button>
-    <div id="remainingIngredients"></div>
-    
+
+    <div class="container">
+        <h2>Enter Ingredients</h2>
+        <label for="ingredients">Ingredients (comma-separated):</label>
+        <input type="text" id="ingredients" value="flour, eggs">
+
+        <!-- Button to trigger the recipe generator -->
+        <button id="testFinalRecipeGeneratorButton">Test Final Recipe Generator</button>
+
+        <h2>Final Recipes</h2>
+        <div id="finalRecipes">
+            <!-- The final recipes will be displayed here -->
+        </div>
+
+        <!-- Button to trigger remaining ingredients display -->
+        <button id="testRemainingIngredientsButton">Test Remaining Ingredients</button>
+
+        <h2>Remaining Ingredients</h2>
+        <div id="remainingIngredients">
+            <!-- The missing ingredients will be displayed here -->
+        </div>
+    </div>
+
     <script src="test.js"></script>
 </body>
 </html>
