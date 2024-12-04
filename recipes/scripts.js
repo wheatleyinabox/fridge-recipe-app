@@ -1,8 +1,22 @@
 async function searchRecipes() {
     const ingredients = document.getElementById('ingredients').value;
     const response = await fetch(`http://localhost:5000/recipes/${ingredients}`);
-    const data = await response.json();
-    displayResults(data);
+    const apiRecipes = await response.json();
+
+    // Format data for frontend without altering original backend logic
+    const formattedData = apiRecipes.map(recipe => ({
+        label: recipe.label,
+        image: recipe.image,
+        calories: Math.round(recipe.calories),
+        mealType: recipe.mealType.join(', '),
+        ingredientLines: recipe.ingredientLines,
+        url: recipe.url
+    }));
+
+    const remainingIngredients = CheckRemainingIngredients(formattedData, ingredients);
+
+    const finalList = await getMLOutputs(remainingIngredients, formattedData);
+    displayResults(finalList);
 }
 
 function displayResults(recipes) {
@@ -106,4 +120,46 @@ function parseIngredients(result) {
         return parts[1] ? parts[1].trim() : '';
     });
     return ingredients.filter(ingredient => ingredient).join(',');
+}
+
+// Function to check remaining ingredients based on user's input
+function CheckRemainingIngredients(apiRecipes, ingredients) {
+    const userIngredients = ingredients.toLowerCase().split(',').map(ing => ing.trim());
+
+    // For each recipe, determine missing ingredients without changing original check logic
+    return apiRecipes.map(recipe => {
+        const missingIngredients = recipe.ingredientLines.filter(
+            ingredient => !userIngredients.some(userIng => ingredient.toLowerCase().includes(userIng))
+        );
+        return { recipe, missingIngredients };
+    });
+}
+
+// Function to get ML outputs based on remaining ingredients
+async function getMLOutputs(remainingIngredients, apiRecipes) {
+    try {
+        // Convert remaining ingredients to a query string
+        const ingredientsList = remainingIngredients
+            .map(ri => ri.missingIngredients.join(', '))
+            .join(', ');
+
+        // Call the ML model to suggest recipes
+        const response = await fetch(`http://localhost:5001/recipes?ingredients=${ingredientsList}`);
+        const mlData = await response.json();
+
+        // Combine original API recipes with ML-based suggestions
+        const mlRecipes = mlData.map(mlRecipe => ({
+            label: mlRecipe.label,
+            image: mlRecipe.image,
+            calories: Math.round(mlRecipe.calories),
+            mealType: mlRecipe.mealType.join(', '),
+            ingredientLines: mlRecipe.ingredientLines,
+            url: mlRecipe.url
+        }));
+
+        return [...apiRecipes, ...mlRecipes];
+    } catch (error) {
+        console.error("Error generating ML-based recipes:", error);
+        return apiRecipes; // Fallback to original recipes if ML API fails
+    }
 }
