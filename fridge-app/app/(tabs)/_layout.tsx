@@ -27,7 +27,18 @@ export default function TabLayout() {
           ),
         }}
       />
-
+      <Tabs.Screen
+        name="shoppingList"
+        options={{
+          title: "Shopping List",
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "newspaper" : "newspaper-outline"}
+              color={color}
+            />
+          ),
+        }}
+      />
       <Tabs.Screen
         name="camera"
         options={{
@@ -43,7 +54,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="MealPlanner"
         options={{
-          title: "MealPlanner",
+          title: "Meal Planner",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "list" : "list-outline"}

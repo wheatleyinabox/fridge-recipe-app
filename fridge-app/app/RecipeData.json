@@ -4,6 +4,7 @@
     "image": "turkey_picacata.png",
     "calories": 350,
     "mealType": "Lunch",
+    "userSelectedMealType": "B",
     "ingredientLines": ["Chicken", "Lettuce", "Olives", "Tomato"],
     "url": "https://example.com/recipe/chicken-salad"
   },
@@ -20,6 +21,7 @@
     "image": "turkey_picacata.png",
     "calories": 350,
     "mealType": "Lunch",
+
     "ingredientLines": ["Chicken", "Lettuce", "Olives", "Tomato"],
     "url": "https://example.com/recipe/chicken-salad"
   },

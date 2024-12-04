@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   Button,
+  Alert,
 } from "react-native";
 
 const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
@@ -38,6 +39,7 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
       <Text style={styles.sectionTitle}>Full Recipe:</Text>
       <Text style={styles.url}>{recipe.url}</Text>
       <Button title="Close" onPress={onClose} />
+      <Button title="Save Recipe!" onPress={onClose} />
     </ScrollView>
   );
 };
