@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Modal,
 } from "react-native";
+
 import RecipeCard from "./RecipeCard";
 import recipesData from "../app/RecipeData.json";
 import RecipeDetail from "./RecipeDetail";
@@ -73,20 +74,28 @@ const RecipeList: React.FC<{ searchQuery: string }> = ({ searchQuery }) => {
     <View style={styles.container}>
       <FlatList
         data={filteredData}
-        keyExtractor={(item) => item.recipe.label} // Use the recipe label as the key
+        keyExtractor={(item) => item.recipe.label}
         renderItem={({ item }) => (
-          <RecipeCard
-            recipe={item.recipe}
-            onPress={() => openModal(item.recipe)}
-          />
+          <View style={{ width: "48%", marginBottom: 15 }}>
+            <RecipeCard
+              recipe={item.recipe}
+              onPress={() => openModal(item.recipe)}
+            />
+          </View>
         )}
+        numColumns={2} // Use numColumns for alignment only
+        columnWrapperStyle={{
+          justifyContent: "space-between", // Space between cards in a row
+        }}
         onEndReached={fetchMoreData}
         onEndReachedThreshold={0.5}
         ListFooterComponent={
           isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : null
         }
-        contentContainerStyle={{ paddingBottom: 20 }}
-        ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+        contentContainerStyle={{
+          paddingHorizontal: 10,
+          paddingBottom: 20,
+        }}
         showsVerticalScrollIndicator={false}
       />
 

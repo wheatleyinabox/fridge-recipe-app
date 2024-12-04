@@ -42,68 +42,52 @@ const RecipeCard: React.FC<{ recipe: Recipe; onPress: () => void }> = ({
 
 const styles = StyleSheet.create({
   card: {
-    display: "flex",
-    flexDirection: "row",
-    width: 315,
-    height: 115,
+    width: "100%", // Card takes full width of its parent
     backgroundColor: Colors.light.primary,
-    marginVertical: 8, // Optional: Add spacing between cards
-    borderRadius: 10, // Optional: Rounded corners for cards
-    shadowColor: "#000", // Optional: Adding shadow for better card visibility
+    borderRadius: 10,
+    marginBottom: 15,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    overflow: "hidden", // Ensure content doesn't spill
   },
   imageContainer: {
-    flex: 1,
-    margin: 10,
-    justifyContent: "center",
-    alignItems: "center",
+    width: "100%",
+    height: 120,
   },
   image: {
     width: "100%",
-    height: 100,
-    borderRadius: 10, // Optional: Add border radius to image
+    height: "100%",
   },
   textContainer: {
-    display: "flex",
-    flex: 2,
-    margin: 10,
-    justifyContent: "space-between",
+    padding: 10,
+    alignItems: "flex-start", // Ensure text aligns to the top
   },
-  textTitle: {
-    flex: 1,
-    justifyContent: "flex-start",
-  },
+  textTitle: {},
   title: {
-    fontSize: 15,
-    fontWeight: "bold",
-    color: "#333", // Optional: Set title color
-  },
-  textDescription: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    flex: 2,
-  },
-  calories: {
     fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 5,
+    flexWrap: "wrap",
+  },
+  textDescription: {},
+  mealType: {
+    fontSize: 14,
     color: "#555",
   },
-  mealType: {
-    fontSize: 16,
-    color: "#555", // Optional: Adjust color for better readability
+  calories: {
+    fontSize: 14,
+    color: "#555",
   },
-  viewFullRecipe: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
+  viewFullRecipe: {},
   viewFullRecipeText: {
-    borderBottomColor: "#007BFF", // Color for the link effect
-    borderBottomWidth: 1,
-    color: "#007BFF", // Add color to text for link styling
+    marginTop: 5,
+    color: "#007BFF",
     fontSize: 14,
     fontWeight: "bold",
+    textAlign: "center",
   },
 });
 

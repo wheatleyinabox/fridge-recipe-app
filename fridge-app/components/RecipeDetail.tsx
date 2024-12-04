@@ -28,7 +28,7 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
     );
   }
 
-  const imageSource = require("../assets/images/turkey_picacata.png");
+  const imageSource = { uri: recipe.image };
 
   const saveRecipe = () => {
     if (selectedMealType) {
