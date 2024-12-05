@@ -189,6 +189,37 @@ app.get('/getRecipes', (req, res) => {
     });
 });
 
+app.post('/ai-recipes', async (req, res) => {
+    const { ingredients, recipes } = req.body;
+
+    if (!ingredients || !Array.isArray(recipes)) {
+        return res.status(400).json({ error: "Ingredients and recipes are required." });
+    }
+
+    const prompt = `
+        Based on these ingredients: ${ingredients.join(', ')}, 
+        and these recipes with the most already utilized ingredients: ${JSON.stringify(recipes)}, 
+        suggest a few recipes that focus on using the remaining unused ingredients from the fridge. 
+        Customize the recipes based on dietary preferences if keywords like 'vegetarian' or 'eggless' are mentioned. 
+        Ensure the response is formatted consistently and user-friendly, including name, ingredients, instructions, difficulty, and time.
+        Format the output as JSON to match the existing recipe data structure.
+    `;
+
+    try {
+        const aiResponse = await model.generateText({
+            prompt,
+            temperature: 0.7,
+            maxOutputTokens: 512,
+        });
+
+        const aiRecipes = JSON.parse(aiResponse.candidates[0].output);
+        res.status(200).json(aiRecipes);
+    } catch (error) {
+        console.error("Error generating AI recipes:", error);
+        res.status(500).json({ error: "Failed to generate AI recipes" });
+    }
+});
+
 //Testing code to add a set recipe
 app.post("/addRecipe", (req, res) => {
     const recipe = {

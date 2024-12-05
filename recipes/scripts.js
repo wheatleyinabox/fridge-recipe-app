@@ -1,16 +1,45 @@
+async function getAIOutput(ingredients, existingRecipes) {
+    try {
+        const response = await fetch('http://localhost:5000/ai-recipes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ingredients, recipes: existingRecipes }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch AI-generated recipes.');
+        }
+
+        const aiRecipes = await response.json();
+        return aiRecipes;
+    } catch (error) {
+        console.error('Error fetching AI recipes:', error);
+        return [];
+    }
+}
+
 async function searchRecipes() {
-    const ingredients = document.getElementById('ingredients').value;
-    const response = await fetch(`http://localhost:5000/recipes/${ingredients}`);
-    const data = await response.json();
-   // AI recipes = (ML function(data))
-    displayResults(data);
+    const ingredients = document.getElementById('ingredients').value.split(',').map(i => i.trim());
+    try {
+        const response = await fetch(`http://localhost:5000/recipes/${ingredients.join(',')}`);
+        const data = await response.json();
+
+        // Get AI-generated recipes and merge them
+        const aiRecipes = await getAIOutput(ingredients, data);
+        const finalRecipes = [...data, ...aiRecipes];
+
+        // Display combined results
+        displayResults(finalRecipes);
+    } catch (error) {
+        console.error('Error fetching recipes:', error);
+    }
 }
 
 function displayResults(recipes) {
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '';
     recipes.forEach(recipeData => {
-        const recipe = recipeData.recipe;
+        const recipe = recipeData.recipe || recipeData; // Handle different formats
         const recipeDiv = document.createElement('div');
         recipeDiv.className = 'recipe';
         recipeDiv.innerHTML = `
@@ -21,7 +50,7 @@ function displayResults(recipes) {
                 ${recipe.ingredientLines.map(ingredient => `<li>${ingredient}</li>`).join('')}
             </ul>
             <p><strong>Calories:</strong> ${Math.round(recipe.calories)}</p>
-            <p><strong>Meal Type:</strong> ${recipe.mealType.join(', ')}</p>
+            <p><strong>Meal Type:</strong> ${Array.isArray(recipe.mealType) ? recipe.mealType.join(', ') : recipe.mealType}</p>
             <p><strong>Directions:</strong> <a href="${recipe.url}" target="_blank">Recipe Link</a></p>
         `;
         resultsDiv.appendChild(recipeDiv);
