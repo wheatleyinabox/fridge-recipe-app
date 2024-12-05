@@ -110,6 +110,7 @@ app.post('/scanner', upload.single('image'), async (req, res) => {
         fs.unlinkSync(imagePath); // delete file after
 
         res.json({ result: await result.response.text() });
+        console.log(result.response.text());
     } catch (error) {
         console.error(error);
         res.status(500).send('Error processing the image');
