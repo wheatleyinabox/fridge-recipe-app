@@ -27,7 +27,7 @@ const MealPlanner: React.FC = () => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `http://192.168.1.225:5000/mealType?mealType=${selectedMealType}` 
+        `http://10.110.251.114:5000/mealType?mealType=${selectedMealType}` 
           
     );
       setFilteredRecipes(response.data);

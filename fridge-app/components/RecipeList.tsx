@@ -35,18 +35,18 @@ const RecipeList: React.FC<{ searchQuery: string }> = ({ searchQuery }) => {
 
   useEffect(() => {
     // Fetch random recipes initially
-    fetchRecipes("http://192.168.1.225:5000/random-recipes/?count=20");
+    fetchRecipes("http://10.110.251.114:5000/random-recipes/?count=20");
   }, []);
 
   useEffect(() => {
     const debounceFetch = setTimeout(() => {
       if (searchQuery.trim() === "") {
         // Fetch random recipes if search query is empty
-        fetchRecipes("http://192.168.1.225:5000/random-recipes/?count=20");
+        fetchRecipes("http://10.110.251.114:5000/random-recipes/?count=20");
       } else {
         // Fetch recipes matching the search query
         fetchRecipes(
-          `http://192.168.1.225:5000/recipes/${encodeURIComponent(
+          `http://10.110.251.114:5000/recipes/${encodeURIComponent(
             searchQuery
           )}`
         );

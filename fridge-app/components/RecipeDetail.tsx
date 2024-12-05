@@ -48,7 +48,7 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
 
       try {
         const response = await axios.post(
-          "http://192.168.1.225:5000/recipesAdd",
+          "http://10.110.251.114:5000/recipesAdd",
           recipeToSave
         );
 
