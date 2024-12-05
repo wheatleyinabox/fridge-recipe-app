@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import {
-  Dimensions,
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Modal,
+  TouchableOpacity,
   Image,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -17,67 +16,6 @@ export default function App() {
   const [modalTitle, setModalTitle] = useState("");
   const [savedImageUri, setSavedImageUri] = useState("");
 
-  const saveImage = async (uri: string) => {
-    try {
-      const fileName = uri.split("/").pop();
-      const newPath = `${FileSystem.documentDirectory}images/${fileName}`;
-
-      console.log("PENEWpath LOCATION HERE LOCATION HERE!@#!@#", newPath);
-      setSavedImageUri(newPath);
-
-      const jsonFilePath = `${FileSystem.documentDirectory}savedImages.json`;
-      let imageData = [];
-
-      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
-      if (fileInfo.exists) {
-        const existingData = await FileSystem.readAsStringAsync(jsonFilePath);
-        imageData = JSON.parse(existingData);
-      }
-
-      imageData.push({
-        uri: newPath,
-        date: new Date().toISOString(),
-      });
-
-      await FileSystem.writeAsStringAsync(
-        jsonFilePath,
-        JSON.stringify(imageData)
-      );
-      console.log("Image URI saved to JSON:", jsonFilePath);
-
-      // PRINT JSON FOR VERIFICATION
-      verifyJsonFile();
-
-      // DISPLAY IMAGE FOR VERIFICATION
-      await FileSystem.makeDirectoryAsync(
-        FileSystem.documentDirectory + "images",
-        { intermediates: true }
-      );
-      await FileSystem.copyAsync({
-        from: uri,
-        to: newPath,
-      });
-
-      console.log("Image saved into app!");
-      setModalTitle("Success");
-    } catch (error) {
-      console.error("Error saving image:", error);
-      setModalTitle("Failure");
-    }
-  };
-
-  const verifyJsonFile = async () => {
-    const jsonFilePath = `${FileSystem.documentDirectory}savedImages.json`;
-    const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
-
-    if (fileInfo.exists) {
-      const data = await FileSystem.readAsStringAsync(jsonFilePath);
-      console.log("Saved JSON data:", JSON.parse(data));
-    } else {
-      console.log("No JSON file found.");
-    }
-  };
-
   const selectImage = async () => {
     let image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -87,12 +25,68 @@ export default function App() {
 
     if (!image.canceled) {
       const uri = image.assets[0].uri;
-      saveImage(uri);
+      setSavedImageUri(uri);
       openModal();
+
+      // Call the upload function here
+      await uploadImage(uri);
     } else {
       setModalTitle("Failure");
       openModal();
     }
+  };
+
+  // Function to upload image to backend
+  const uploadImage = async (uri: string) => {
+    try {
+      const fileName = uri.split('/').pop();
+      const match = /\.(\w+)$/.exec(fileName || '');
+      const fileType = match ? `image/${match[1]}` : `image`;
+
+      // Create a new FormData object
+      const formData = new FormData();
+      formData.append('image', {
+        uri,
+        name: fileName,
+        type: fileType,
+      });
+
+      // Send POST request to backend
+      const ingredientsRaw = await fetch('http://10.110.251.114:5000/scanner', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        body: formData,
+      });
+
+      const ingredientsJson = await ingredientsRaw.json();
+      console.log('Response from backend:', ingredientsJson);
+
+      const parsedIngredients = parseIngredients(ingredientsJson.result);
+      console.log('Parsed Ingredients:', parsedIngredients);
+
+      const recipesRaw = await fetch(`http://10.110.251.114:5000/recipes/${parsedIngredients}`);
+      const recipesJson = await recipesRaw.json();
+
+      console.log('Returned Ingredients', recipesJson);
+
+      setModalTitle("Success");
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      setModalTitle("Failure");
+    }
+  };
+
+  // copied over from scripts.js lol
+  const parseIngredients = (result) => {
+    // Assuming the result is in the format "count;item"
+    const lines = result.trim().split('\n');
+    const ingredients = lines.map(line => {
+      const parts = line.split(';');
+      return parts[1] ? parts[1].trim() : '';
+    });
+    return ingredients.filter(ingredient => ingredient).join(',');
   };
 
   const openModal = () => {
@@ -115,7 +109,7 @@ export default function App() {
 
       <View style={styles.buttonContainer}>
         <Pressable style={styles.button} onPress={selectImage}>
-          <Text style={styles.title}>Upload Image</Text>
+          <Text style={styles.buttonText}>Upload Image</Text>
         </Pressable>
       </View>
 
@@ -134,7 +128,7 @@ export default function App() {
                 : "Failed to upload image."}
             </Text>
 
-            {savedImageUri ? ( // Conditionally render the image
+            {savedImageUri ? (
               <Image source={{ uri: savedImageUri }} style={styles.image} />
             ) : null}
 
@@ -151,20 +145,16 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
+    paddingTop: "25%",
     alignItems: "center",
     backgroundColor: "#fff",
   },
   banner: {
-    width: Dimensions.get("window").width,
+    width: '100%',
     padding: 20,
     backgroundColor: "#5B795D",
     justifyContent: "center",
     alignItems: "center",
-  },
-  buttonContainer: {
-    position: "absolute",
-    top: "70%",
   },
   title: {
     fontSize: 24,
@@ -173,10 +163,23 @@ const styles = StyleSheet.create({
   },
   text: {
     margin: 20,
+    textAlign: "center",
+  },
+  buttonContainer: {
+    marginTop: 20,
+  },
+  button: {
+    padding: 10,
+    backgroundColor: "#5B795D",
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -186,21 +189,15 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     alignItems: "center",
-    elevation: 10, // Adds shadow for Android
   },
   modalTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    paddingBottom: 10,
+    marginBottom: 10,
   },
   modalText: {
     fontSize: 18,
     marginBottom: 20,
-  },
-  button: {
-    padding: 10,
-    backgroundColor: "#5B795D",
-    borderRadius: 5,
   },
   closeButtonText: {
     color: "#fff",
@@ -209,6 +206,6 @@ const styles = StyleSheet.create({
   image: {
     width: 200,
     height: 200,
-    paddingBottom: 20,
+    marginBottom: 20,
   },
 });
