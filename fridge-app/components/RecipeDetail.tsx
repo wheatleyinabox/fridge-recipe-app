@@ -14,7 +14,7 @@ import {
   Dimensions,
 } from "react-native";
 import HoverableButton from "./HoverButton";
-import axios from "axios"
+import axios from "axios";
 const { width } = Dimensions.get("window");
 
 const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
@@ -68,12 +68,22 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
       Alert.alert("Select Meal Type", "Please select a meal type to proceed.");
     }
   };
+  const handleLinkPress = (url: string) => {
+    Linking.openURL(url).catch((err) =>
+      console.error("Failed to open URL", err)
+    );
+  };
+
   return (
     <ScrollView style={styles.container}>
       <Image source={imageSource} style={styles.image} />
       <Text style={styles.title}>{recipe.label}</Text>
-      <Text style={styles.calories}>{recipe.calories.toFixed(0)} calories</Text>
-      <Text style={styles.mealType}>Meal Type: {recipe.mealType}</Text>
+      <View style={styles.subInfo}>
+        <Text style={styles.calories}>
+          {recipe.calories.toFixed(0)} calories
+        </Text>
+        <Text style={styles.mealType}>Meal Type: {recipe.mealType}</Text>
+      </View>
       <Text style={styles.sectionTitle}>Ingredients:</Text>
       {recipe.ingredientLines.map((ingredient: string, index: number) => (
         <Text key={index} style={styles.ingredient}>
@@ -83,11 +93,13 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
       <TouchableOpacity onPress={() => handleLinkPress(recipe.url)}>
         <Text style={styles.url}>View Full Recipe</Text>
       </TouchableOpacity>
-      <HoverableButton title="Close" onPress={onClose} />
-      <HoverableButton
-        title="Save Recipe!"
-        onPress={() => setModalVisible(true)}
-      />
+      <View style={styles.hoverButtonContainer}>
+        <HoverableButton title="Close" onPress={onClose} />
+        <HoverableButton
+          title="Save Recipe!"
+          onPress={() => setModalVisible(true)}
+        />
+      </View>
       <Modal
         animationType="slide"
         transparent={true}
@@ -97,24 +109,20 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Select Meal Type</Text>
-            <TouchableOpacity
-              style={styles.mealTypeButton}
+            <HoverableButton
+              title="Breakfast"
               onPress={() => setSelectedMealType("Breakfast")}
-            >
-              <Text style={styles.mealTypeText}>Breakfast</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.mealTypeButton}
+            />
+            <HoverableButton
+              title="Lunch"
               onPress={() => setSelectedMealType("Lunch")}
-            >
-              <Text style={styles.mealTypeText}>Lunch</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.mealTypeButton}
+            />
+
+            <HoverableButton
+              title="Dinner"
               onPress={() => setSelectedMealType("Dinner")}
-            >
-              <Text style={styles.mealTypeText}>Dinner</Text>
-            </TouchableOpacity>
+            />
+
             <View style={styles.modalButtons}>
               <Button title="Save" onPress={saveRecipe} color="green" />
               <Button
@@ -135,6 +143,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: width,
     backgroundColor: "#f8f8f8", // A soft background color that is easy on the eyes
+    padding: 5,
   },
   image: {
     width: "95%",
@@ -150,17 +159,22 @@ const styles = StyleSheet.create({
     textAlign: "center", // Centers the title
     marginVertical: 15,
   },
+  subInfo: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-evenly",
+  },
+
   calories: {
-    fontSize: 18,
+    fontSize: 16,
     color: "#555", // Slightly lighter color to differentiate it from the title
     textAlign: "center", // Centers the calories text
     marginBottom: 10,
   },
   mealType: {
     fontSize: 16,
-    color: "#777", // Lighter gray for less important text
-    textAlign: "center",
-    marginBottom: 25,
+    color: "#555", // Slightly lighter color to differentiate it from the title
+    textAlign: "center", // Centers the calories text
+    marginBottom: 10,
   },
   sectionTitle: {
     fontSize: 22,
@@ -205,6 +219,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600", // Medium bold text for better readability
   },
+  hoverButtonContainer: {
+    padding: 20,
+  },
+
   modalOverlay: {
     flex: 1,
     justifyContent: "center",
