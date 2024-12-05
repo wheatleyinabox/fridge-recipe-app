@@ -57,8 +57,12 @@ const styles = StyleSheet.create({
     height: 120,
   },
   image: {
-    width: "100%",
+    width: "90%",
     height: "100%",
+    alignSelf: "center",
+    alignContent: "center",
+    margin: 10,
+    borderRadius: 10,
   },
   textContainer: {
     padding: 10,

@@ -46,8 +46,7 @@ const MealPlanner: React.FC = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>
-        Select up to 7 {selectedMealType.toLowerCase()} meals for your
-        planner...
+        Your selected {selectedMealType.toLowerCase()} meals
       </Text>
       <RecipeSearchBar
         searchQuery={searchQuery}

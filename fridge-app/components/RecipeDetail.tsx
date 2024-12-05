@@ -61,8 +61,12 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
     <ScrollView style={styles.container}>
       <Image source={imageSource} style={styles.image} />
       <Text style={styles.title}>{recipe.label}</Text>
-      <Text style={styles.calories}>{recipe.calories.toFixed(0)} calories</Text>
-      <Text style={styles.mealType}>Meal Type: {recipe.mealType}</Text>
+      <View style={styles.subInfo}>
+        <Text style={styles.calories}>
+          {recipe.calories.toFixed(0)} calories
+        </Text>
+        <Text style={styles.mealType}>Meal Type: {recipe.mealType}</Text>
+      </View>
       <Text style={styles.sectionTitle}>Ingredients:</Text>
       {recipe.ingredientLines.map((ingredient: string, index: number) => (
         <Text key={index} style={styles.ingredient}>
@@ -86,24 +90,19 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Select Meal Type</Text>
-            <TouchableOpacity
-              style={styles.mealTypeButton}
+            <HoverableButton
+              title="Breakfast"
               onPress={() => setSelectedMealType("Breakfast")}
-            >
-              <Text style={styles.mealTypeText}>Breakfast</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.mealTypeButton}
+            />
+
+            <HoverableButton
+              title="Lunch"
               onPress={() => setSelectedMealType("Lunch")}
-            >
-              <Text style={styles.mealTypeText}>Lunch</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.mealTypeButton}
+            />
+            <HoverableButton
+              title="Dinner"
               onPress={() => setSelectedMealType("Dinner")}
-            >
-              <Text style={styles.mealTypeText}>Dinner</Text>
-            </TouchableOpacity>
+            />
             <View style={styles.modalButtons}>
               <Button title="Save" onPress={saveRecipe} color="green" />
               <Button
@@ -123,6 +122,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: width,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
     backgroundColor: "#f8f8f8", // A soft background color that is easy on the eyes
   },
   image: {
@@ -139,6 +140,7 @@ const styles = StyleSheet.create({
     textAlign: "center", // Centers the title
     marginVertical: 15,
   },
+  subInfo: { flexDirection: "row-reverse", justifyContent: "space-evenly" },
   calories: {
     fontSize: 18,
     color: "#555", // Slightly lighter color to differentiate it from the title
@@ -146,10 +148,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   mealType: {
-    fontSize: 16,
-    color: "#777", // Lighter gray for less important text
-    textAlign: "center",
-    marginBottom: 25,
+    fontSize: 18,
+    color: "#555", // Slightly lighter color to differentiate it from the title
+    textAlign: "center", // Centers the calories text
+    marginBottom: 10,
   },
   sectionTitle: {
     fontSize: 22,
@@ -161,14 +163,14 @@ const styles = StyleSheet.create({
   ingredient: {
     fontSize: 16,
     color: "#555",
-    marginVertical: 6,
+    marginVertical: 3,
     lineHeight: 24, // More space between lines for readability
     paddingLeft: 20, // Indented to show it's a list
   },
   url: {
     fontSize: 16,
     color: "#007BFF", // A clickable blue color for URLs
-    marginTop: 20,
+    margin: 20,
     textDecorationLine: "underline", // Underlines the URL for clarity
     textAlign: "center", // Centers the URL for a clean look
   },

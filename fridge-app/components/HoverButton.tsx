@@ -28,6 +28,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingVertical: 12,
     paddingHorizontal: 40,
+    marginBottom: 20,
+    width: "100%",
     alignItems: "center",
     justifyContent: "center",
     elevation: 4, // Adds a shadow effect on Android
