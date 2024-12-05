@@ -199,8 +199,9 @@ app.post('/ai-recipes', async (req, res) => {
     const prompt = `
         Based on these ingredients: ${ingredients.join(', ')}, 
         and these recipes with the most already utilized ingredients: ${JSON.stringify(recipes)}, 
-        suggest a few recipes that focus on using the remaining unused ingredients from the fridge. 
-        Customize the recipes based on dietary preferences if keywords like 'vegetarian' or 'eggless' are mentioned. 
+        Generate Recipes with the name tag of AI generated next to it which are made from the ingredients not already utilized in recipes.
+        Prioritize recipes based on the ingredients and avoid using meat if the ingredients dont have any so that vegetarian users dont get meat options
+        Also Return the provided recipes as it is in a priority without modifying them so their images are rereturned to me.
         Ensure the response is formatted consistently and user-friendly, including name, ingredients, instructions, difficulty, and time.
         Format the output as JSON to match the existing recipe data structure.
     `;
