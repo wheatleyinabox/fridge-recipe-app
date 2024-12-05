@@ -1,9 +1,17 @@
-import React, { useState } from "react";
-import { View, FlatList, Text, Modal, StyleSheet, Button } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  FlatList,
+  Text,
+  Modal,
+  StyleSheet,
+  Button,
+  ActivityIndicator,
+} from "react-native";
 import RecipeSearchBar from "../../components/RecipeSearchBar";
 import RecipeCard from "../../components/RecipeCard";
-import recipesData from "../RecipeData.json";
 import RecipeDetail from "../../components/RecipeDetail"; // Assuming RecipeDetail is in this path
+import axios from "axios";
 
 const MealPlanner: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -54,20 +62,28 @@ const MealPlanner: React.FC = () => {
         selectedMealType={selectedMealType}
         onMealTypeChange={setSelectedMealType}
       />
-      <FlatList
-        data={filteredRecipes}
-        keyExtractor={(item) => item.recipe.label} // Access the recipe's label for the key
-        renderItem={({ item }) => (
-          <RecipeCard
-            recipe={item.recipe} // Pass the recipe object to RecipeCard
-            onPress={() => openModal(item.recipe)} // Pass the recipe object to the modal
-            onSelect={() => selectMeal(item.recipe)} // Pass the recipe object to the selectMeal function
-          />
-        )}
-        contentContainerStyle={styles.listContainer}
-        ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
-        showsVerticalScrollIndicator={false}
-      />
+
+      {/* Show loader when fetching data */}
+      {isLoading ? (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      ) : (
+        <FlatList
+          data={displayedRecipes}
+          keyExtractor={(item) => item.label} // Access the recipe's label for the key
+          renderItem={({ item }) => (
+            <RecipeCard
+              recipe={item} // Pass the recipe object to RecipeCard
+              onPress={() => openModal(item)} // Pass the recipe object to the modal
+              onSelect={() => selectMeal(item)} // Pass the recipe object to the selectMeal function
+            />
+          )}
+          contentContainerStyle={styles.listContainer}
+          ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
 
       {/* Modal for Recipe Details */}
       <Modal
@@ -119,6 +135,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
     justifyContent: "center",
     padding: 20,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   selectedMealsContainer: {
     padding: 20,

@@ -1,0 +1,6 @@
+.env
+node_modules/
+.venv
+.vscode
+fridge-app/android
+recipes.db

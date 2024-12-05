@@ -7,51 +7,36 @@ import {
   Text,
   Dimensions,
 } from "react-native";
-
 import RecipeCard from "./RecipeCard";
-import recipesData from "../app/RecipeData.json";
 import RecipeDetail from "./RecipeDetail";
-import MasonryList from "@danielprr-react-native/animated-scrollview-masonry-list"; // Import MasonryList
+import MasonryList from "@danielprr-react-native/animated-scrollview-masonry-list";
 
 const { width } = Dimensions.get("window");
 
 const RecipeList: React.FC<{ searchQuery: string }> = ({ searchQuery }) => {
-  const itemsPerPage = 10; // Number of recipes per page
-  const [data, setData] = useState<any[]>([]); // State to store recipe data
-  const [isLoading, setIsLoading] = useState(false); // Loading state for pagination
-  const [page, setPage] = useState(1); // Current page for pagination
-  const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
-  const [selectedRecipe, setSelectedRecipe] = useState<any>(null); // Selected recipe for modal
-  const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
+  const [data, setData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
 
-  // Function to fetch more data for pagination
   useEffect(() => {
-    fetchMoreData();
-  }, []); // Empty dependency array means this runs once when the component mounts
-
-  // Fetch more data (pagination logic)
-  const fetchMoreData = () => {
-    if (isLoading) return;
-    setIsLoading(true);
-
-    setTimeout(() => {
-      const startIndex = (page - 1) * itemsPerPage;
-      const newRecipes = recipesData.slice(
-        startIndex,
-        startIndex + itemsPerPage
-      );
-
-      if (newRecipes.length > 0) {
-        setData((prevData) => [...prevData, ...newRecipes]);
-        setPage((prevPage) => prevPage + 1);
+    const fetchRecipes = async () => {
+      try {
+        const response = await fetch("http://10.110.251.114:5000/random-recipes/?count=20");
+        const json = await response.json();
+        const recipes = json.map((item: any) => item.recipe);
+        setData(recipes);
+      } catch (error) {
+        console.error("Error fetching recipes:", error);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    }, 1500); // Simulate a delay to fetch more data
-  };
+    };
 
-  // Filter recipes based on the search query
-  const filteredData = data.filter((item) => {
-    const recipe = item.recipe;
+    fetchRecipes();
+  }, []);
+
+  const filteredData = data.filter((recipe) => {
     return (
       recipe.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
       recipe.ingredientLines.some((ingredient: string) =>
@@ -63,53 +48,35 @@ const RecipeList: React.FC<{ searchQuery: string }> = ({ searchQuery }) => {
     );
   });
 
-  // Open the modal to show recipe details
   const openModal = (recipe: any) => {
     setSelectedRecipe(recipe);
     setIsModalVisible(true);
   };
 
-  // Close the modal
   const closeModal = () => {
     setIsModalVisible(false);
     setSelectedRecipe(null);
   };
 
-  // Handle refresh (reset pagination and data)
-  const handleRefresh = () => {
-    setRefreshing(true);
-    setPage(1);
-    setData([]); // Clear current data to simulate fetching fresh data
-    fetchMoreData(); // Fetch new data after reset
-    setRefreshing(false);
-  };
+  if (isLoading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <MasonryList
         data={filteredData}
-        keyExtractor={(item) => item.recipe.label}
+        keyExtractor={(item) => item.label}
         renderItem={({ item }) => (
           <View style={styles.cardContainer}>
-            <RecipeCard
-              recipe={item.recipe}
-              onPress={() => openModal(item.recipe)}
-            />
+            <RecipeCard recipe={item} onPress={() => openModal(item)} />
           </View>
         )}
-        onEndReached={fetchMoreData}
-        onEndReachedThreshold={0.5}
-        numColumns={2} // 2 columns in the grid
-        onRefresh={handleRefresh} // Handle pull-to-refresh
-        refreshing={refreshing} // Show refresh indicator when refreshing
-        ListFooterComponent={
-          isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : null
-        }
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text>No recipes found</Text>
-          </View>
-        }
+        numColumns={2}
         contentContainerStyle={{
           paddingHorizontal: 10,
           paddingBottom: 20,
@@ -135,26 +102,21 @@ const RecipeList: React.FC<{ searchQuery: string }> = ({ searchQuery }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 10,
-    backgroundColor: "#f8f8f8",
   },
   cardContainer: {
-    width: (width - 30) / 2, // Adjust the card width dynamically to fit two items per row
-    marginBottom: 5,
-    paddingHorizontal: 10,
+    flex: 1,
+    margin: 5,
   },
   modalContainer: {
     flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
   },
 });
 

@@ -14,6 +14,7 @@ import {
   Dimensions,
 } from "react-native";
 import HoverableButton from "./HoverButton";
+import axios from "axios";
 const { width } = Dimensions.get("window");
 
 const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
@@ -34,23 +35,39 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
 
   const imageSource = { uri: recipe.image };
 
-  const saveRecipe = () => {
+  const saveRecipe = async () => {
     if (selectedMealType) {
-      recipe.userSelectedMealType = selectedMealType;
+      const recipeToSave = {
+        label: recipe.label,
+        image: recipe.image,
+        url: recipe.url,
+        ingredientLines: recipe.ingredientLines,
+        calories: recipe.calories,
+        mealType: selectedMealType,
+      };
 
-      // Simulate updating the JSON file (replace with actual update logic)
-      Alert.alert(
-        "Success",
-        `${recipe.label} saved as ${selectedMealType} meal.`,
-        [{ text: "OK", onPress: () => setModalVisible(false) }]
-      );
+      try {
+        const response = await axios.post(
+          "http://10.110.251.114:5000/recipesAdd",
+          recipeToSave
+        );
+
+        if (response.status === 200) {
+          Alert.alert(
+            "Success",
+            `${recipe.label} saved as ${selectedMealType} meal.`,
+            [{ text: "OK", onPress: () => setModalVisible(false) }]
+          );
+        }
+      } catch (error) {
+        console.error("Error saving recipe:", error.message);
+        Alert.alert("Error", "Failed to save the recipe. Please try again.");
+      }
     } else {
-      // If no meal type is selected, prompt the user to select one
       setModalVisible(true);
       Alert.alert("Select Meal Type", "Please select a meal type to proceed.");
     }
   };
-
   const handleLinkPress = (url: string) => {
     Linking.openURL(url).catch((err) =>
       console.error("Failed to open URL", err)
@@ -76,11 +93,13 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
       <TouchableOpacity onPress={() => handleLinkPress(recipe.url)}>
         <Text style={styles.url}>View Full Recipe</Text>
       </TouchableOpacity>
-      <HoverableButton title="Close" onPress={onClose} />
-      <HoverableButton
-        title="Save Recipe!"
-        onPress={() => setModalVisible(true)}
-      />
+      <View style={styles.hoverButtonContainer}>
+        <HoverableButton title="Close" onPress={onClose} />
+        <HoverableButton
+          title="Save Recipe!"
+          onPress={() => setModalVisible(true)}
+        />
+      </View>
       <Modal
         animationType="slide"
         transparent={true}
@@ -94,15 +113,16 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
               title="Breakfast"
               onPress={() => setSelectedMealType("Breakfast")}
             />
-
             <HoverableButton
               title="Lunch"
               onPress={() => setSelectedMealType("Lunch")}
             />
+
             <HoverableButton
               title="Dinner"
               onPress={() => setSelectedMealType("Dinner")}
             />
+
             <View style={styles.modalButtons}>
               <Button title="Save" onPress={saveRecipe} color="green" />
               <Button
@@ -125,6 +145,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 20,
     backgroundColor: "#f8f8f8", // A soft background color that is easy on the eyes
+    padding: 5,
   },
   image: {
     width: "95%",
@@ -140,15 +161,19 @@ const styles = StyleSheet.create({
     textAlign: "center", // Centers the title
     marginVertical: 15,
   },
-  subInfo: { flexDirection: "row-reverse", justifyContent: "space-evenly" },
+  subInfo: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-evenly",
+  },
+
   calories: {
-    fontSize: 18,
+    fontSize: 16,
     color: "#555", // Slightly lighter color to differentiate it from the title
     textAlign: "center", // Centers the calories text
     marginBottom: 10,
   },
   mealType: {
-    fontSize: 18,
+    fontSize: 16,
     color: "#555", // Slightly lighter color to differentiate it from the title
     textAlign: "center", // Centers the calories text
     marginBottom: 10,
@@ -196,6 +221,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600", // Medium bold text for better readability
   },
+  hoverButtonContainer: {
+    padding: 20,
+  },
+
   modalOverlay: {
     flex: 1,
     justifyContent: "center",
