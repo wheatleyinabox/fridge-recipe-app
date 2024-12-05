@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Search</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Recipe Search</h1>
+        <input type="text" id="ingredients" placeholder="Enter ingredients separated by commas">
+        <button onclick="searchRecipes()">Search</button>
+        <button onclick="showRandomRecipes()">Get Random</button>
+        <div class="results" id="results"></div>
+        <div class="random-recipes" id="random-recipes"></div>
+    </div>
+    <div class="scanner">
+        <h2>Fridge Scanner</h2>
+        <input type="file" id="imageInput" accept="image/*">
+        <button onclick="scanImage()">Scan Image</button>
+        <div id="scanResult"></div>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
