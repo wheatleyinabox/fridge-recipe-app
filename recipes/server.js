@@ -39,9 +39,10 @@ const db = new sqlite3.Database("./recipes.db", (err) => {
                 label TEXT NOT NULL,
                 image TEXT,
                 url TEXT,
-                ingredients TEXT,
+                ingredientLines TEXT,
                 calories REAL,
                 mealType TEXT
+                
             )`
         );
     }
@@ -50,14 +51,14 @@ const db = new sqlite3.Database("./recipes.db", (err) => {
 //Store in database
 const storeRecipe = (recipe) => {
     const sql = `
-        INSERT INTO recipes (label, image, url, ingredients, calories, mealType)
+        INSERT INTO recipes (label, image, url, ingredientLines, calories, mealType)
         VALUES (?, ?, ?, ?, ?, ?)
     `;
     const params = [
         recipe.label,
         recipe.image,
         recipe.url,
-        JSON.stringify(recipe.ingredients),
+        JSON.stringify(recipe.ingredientLines),
         recipe.calories,
         recipe.mealType,
     ];
@@ -75,7 +76,7 @@ app.get('/', (req, res) => {
     res.send('Welcome to the Recipe API')
 })
 
-//Fetch recipes and store in database
+//Fetch recipes from api
 app.get('/recipes/:query', async (req, res) => {
     console.log(req.params.query);
     try {
@@ -83,17 +84,17 @@ app.get('/recipes/:query', async (req, res) => {
         if(!query){
             return res.status(400).json({ error: "Query parameter is missing" });
         }
-        let ingredients = query.split(',');
+        let ingredientLines = query.split(',');
         let recipes = [];
         let subsetCount = 1;
 
         // Keep splitting until recipes are found or max 4 subsets
         while (recipes.length === 0 && subsetCount <= 4) {
             const subsets = [];
-            const subsetSize = Math.ceil(ingredients.length / subsetCount);
+            const subsetSize = Math.ceil(ingredientLines.length / subsetCount);
 
-            for (let i = 0; i < ingredients.length; i += subsetSize) {
-                subsets.push(ingredients.slice(i, i + subsetSize));
+            for (let i = 0; i < ingredientLines.length; i += subsetSize) {
+                subsets.push(ingredientLines.slice(i, i + subsetSize));
             }
 
             // Query the API with each subset
@@ -127,6 +128,7 @@ app.get('/recipes/:query', async (req, res) => {
     }
 });
 
+//get random recipe from api
 app.get('/random-recipes', async (req, res) => {
     try {
         const { count = 3 } = req.query; // Defaults to 3 if no count is specified
@@ -187,12 +189,13 @@ app.get('/getRecipes', (req, res) => {
     });
 });
 
+//Testing code to add a set recipe
 app.post("/addRecipe", (req, res) => {
     const recipe = {
         label: "Shredded Chicken",
         image: "https://edamam-product-images.s3.amazonaws.com/web-img/f98/f98cb99f615f7cc0ec01c033e9ff72ec.jpg",
         url: "https://example.com/recipe/chicken-salad",
-        ingredients: ["Chicken", "Spices", "Olive oil"],
+        ingredientLines: ["Chicken", "Spices", "Olive oil"],
         calories: 250,
         mealType: "Lunch"
     };
@@ -200,21 +203,21 @@ app.post("/addRecipe", (req, res) => {
     res.send("Recipe added successfully");
 });
 
-app.post("/recipes", (req, res) => {
-    const { label, image, url, ingredients, calories, mealType } = req.body;
+app.post("/recipesAdd", (req, res) => {
+    const { label, image, url, ingredientLines, calories, mealType } = req.body;
 
-    if(!label || !image || !url || !ingredients) {
+    if(!label || !image || !url || !ingredientLines) {
         return res.status(400).send("Missing required fields");
     }
 
     const sql = `
-        INSERT INTO recipes (label, image, url, ingredients, calories, mealType)
+        INSERT INTO recipes (label, image, url, ingredientLines, calories, mealType)
         VALUES (?, ?, ?, ?, ?, ?)`;
     const params = [
         label,
         image,
         url,
-        JSON.stringify(ingredients),
+        JSON.stringify(ingredientLines),
         calories,
         mealType,
     ];
@@ -227,6 +230,33 @@ app.post("/recipes", (req, res) => {
         res.status(200).send("Recipe stored sucessfully");
     })
 })
+
+// API Route: Fetch recipes by mealType
+app.get("/mealType", (req, res) => {
+    const { mealType } = req.query; // Get mealType from query parameter
+
+    console.log("Recieved mealType:", mealType); //log meal type for debugging
+  
+    if (!mealType) {
+      return res.status(400).json({ error: "Meal type is required" });
+    }
+  
+    // SQL query to fetch recipes with the specified mealType
+    const query = `SELECT * FROM recipes WHERE mealType = ?`;
+  
+    db.all(query, [mealType], (err, rows) => {
+      if (err) {
+        console.error("Error fetching recipes:", err.message);
+        return res.status(500).json({ error: "Internal server error" });
+      }
+  
+      if (rows.length === 0) {
+        return res.status(404).json({ message: "No recipes found for this meal type" });
+      }
+  
+      res.status(200).json(rows); // Return recipes as JSON
+    });
+  });
 
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`)

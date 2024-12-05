@@ -20,13 +20,13 @@ npm install
 npm install axios
 
 add necessary change to frontend tabs (tbd for merging)
+currently has some recipes in database already, if want clear just delete recipes.db
 
+To run this app make sure to
 run server using node server.js or smth in backend folder
 run android app using npm run android in frontend folder
 
-http://localhost:5000/getRecipes gives whats in the database atm
-http://localhost:5000/addRecipe adds a set recipe
+http://localhost:5000/getRecipes gives whats in the database atm (replace localhost with current ip)
+
 
 will add dynamic ip address
-nothing in this frontend works
-will add frontend adding recipe to database
