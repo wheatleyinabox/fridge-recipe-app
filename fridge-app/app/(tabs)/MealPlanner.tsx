@@ -105,12 +105,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
     backgroundColor: "#fff",
-    paddingTop: 20,
+    paddingTop: 50,
   },
   headerText: {
     fontSize: 24,
     textAlign: "center",
-    marginVertical: 10,
   },
   listContainer: {
     padding: 20,
