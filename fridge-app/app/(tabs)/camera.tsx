@@ -36,6 +36,55 @@ export default function App() {
     }
   };
 
+  const mapMealType = (originalMealTypes: string[]): string[] => {
+    return originalMealTypes.map((meal) => {
+      switch (meal.toLowerCase()) {
+        case 'breakfast':
+        case 'brunch':
+          return 'Breakfast';
+        case 'snack':
+        case 'teatime':
+          return 'Lunch';
+        case 'lunch/dinner':
+          return Math.random() < 0.5 ? 'Lunch' : 'Dinner';
+        default:
+          return 'Lunch'; // Default to 'Lunch' if mealType is unrecognized
+      }
+    });
+  };
+
+  const saveRecipesToDatabase = async (recipes) => {
+    for (const recipeData of recipes) {
+      const recipe = recipeData.recipe || recipeData;
+      const mappedMealTypes = mapMealType(recipe.mealType || ['lunch/dinner']);
+
+      const recipeToSave = {
+        label: recipe.label,
+        image: recipe.image,
+        url: recipe.url,
+        ingredientLines: recipe.ingredientLines,
+        calories: recipe.calories,
+        mealType: mappedMealTypes[0],
+      };
+
+      try {
+        const response = await fetch(`http://10.110.251.114:5000/recipesAdd`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(recipeToSave),
+        });
+
+        if (!response.ok) {
+          console.error('Error saving recipe:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error saving recipe:', error);
+      }
+    }
+  };
+
   // Function to upload image to backend
   const uploadImage = async (uri: string) => {
     try {
@@ -70,6 +119,10 @@ export default function App() {
       const recipesJson = await recipesRaw.json();
 
       console.log('Returned Ingredients', recipesJson);
+
+      await saveRecipesToDatabase(recipesJson);
+
+      console.log('Saved to Database');
 
       setModalTitle("Success");
     } catch (error) {
