@@ -178,7 +178,7 @@ export default function App() {
             <Text style={styles.modalText}>
               {modalTitle === "Success"
                 ? "Image uploaded successfully!"
-                : "Failed to upload image."}
+                : "Loading..."}
             </Text>
 
             {savedImageUri ? (
