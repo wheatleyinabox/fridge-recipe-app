@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors";
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { SearchBar } from "react-native-elements";
@@ -85,11 +86,11 @@ const styles = StyleSheet.create({
   },
   mealTypeText: {
     fontSize: 16,
-    color: "#1A1C1B",
+    color: "green",
   },
   selectedMealTypeText: {
     fontWeight: "bold",
-    color: "#fff", // White text for better contrast when selected
+    color: Colors.light.secondary, // White text for better contrast when selected
   },
 });
 

@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors";
 import React, { useState } from "react";
 import {
   View,
@@ -10,7 +11,10 @@ import {
   Modal,
   TouchableOpacity,
   Linking, // Import Linking
+  Dimensions,
 } from "react-native";
+import HoverableButton from "./HoverButton";
+const { width } = Dimensions.get("window");
 
 const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
   recipe,
@@ -32,7 +36,6 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
 
   const saveRecipe = () => {
     if (selectedMealType) {
-      // Update the recipe object
       recipe.userSelectedMealType = selectedMealType;
 
       // Simulate updating the JSON file (replace with actual update logic)
@@ -42,7 +45,9 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
         [{ text: "OK", onPress: () => setModalVisible(false) }]
       );
     } else {
-      Alert.alert("Error", "Please select a meal type.");
+      // If no meal type is selected, prompt the user to select one
+      setModalVisible(true);
+      Alert.alert("Select Meal Type", "Please select a meal type to proceed.");
     }
   };
 
@@ -56,10 +61,7 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
     <ScrollView style={styles.container}>
       <Image source={imageSource} style={styles.image} />
       <Text style={styles.title}>{recipe.label}</Text>
-      <Text style={styles.calories}>
-        {" "}
-        {recipe.calories.toFixed(0)} calories
-      </Text>
+      <Text style={styles.calories}>{recipe.calories.toFixed(0)} calories</Text>
       <Text style={styles.mealType}>Meal Type: {recipe.mealType}</Text>
       <Text style={styles.sectionTitle}>Ingredients:</Text>
       {recipe.ingredientLines.map((ingredient: string, index: number) => (
@@ -70,10 +72,11 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
       <TouchableOpacity onPress={() => handleLinkPress(recipe.url)}>
         <Text style={styles.url}>View Full Recipe</Text>
       </TouchableOpacity>
-      <Button title="Close" onPress={onClose} />
-      <Button title="Save Recipe!" onPress={() => setModalVisible(true)} />
-
-      {/* Modal for selecting meal type */}
+      <HoverableButton title="Close" onPress={onClose} />
+      <HoverableButton
+        title="Save Recipe!"
+        onPress={() => setModalVisible(true)}
+      />
       <Modal
         animationType="slide"
         transparent={true}
@@ -117,15 +120,80 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10, backgroundColor: "#fff" },
-  image: { width: "100%", height: 250, borderRadius: 10, marginBottom: 10 },
-  title: { fontSize: 22, fontWeight: "bold", marginVertical: 10 },
-  calories: { fontSize: 18, color: "#666" },
-  mealType: { fontSize: 16, color: "#888" },
-  sectionTitle: { fontSize: 20, fontWeight: "bold", marginVertical: 10 },
-  ingredient: { fontSize: 16, color: "#555", marginVertical: 2 },
-  url: { fontSize: 14, color: "blue", marginTop: 10 },
-  error: { fontSize: 18, color: "red", textAlign: "center", marginTop: 20 },
+  container: {
+    flex: 1,
+    width: width,
+    backgroundColor: "#f8f8f8", // A soft background color that is easy on the eyes
+  },
+  image: {
+    width: "95%",
+    height: 300, // Larger image for better visual impact
+    borderRadius: 15,
+    padding: 20,
+    alignSelf: "center",
+  },
+  title: {
+    fontSize: 28, // Large title to capture attention
+    fontWeight: "700", // Bold title for better prominence
+    color: "#333", // Dark text for good contrast
+    textAlign: "center", // Centers the title
+    marginVertical: 15,
+  },
+  calories: {
+    fontSize: 18,
+    color: "#555", // Slightly lighter color to differentiate it from the title
+    textAlign: "center", // Centers the calories text
+    marginBottom: 10,
+  },
+  mealType: {
+    fontSize: 16,
+    color: "#777", // Lighter gray for less important text
+    textAlign: "center",
+    marginBottom: 25,
+  },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: "600", // Slightly bold for sections
+    color: "#333",
+    marginVertical: 15,
+    paddingLeft: 10, // Gives a nice margin from the left
+  },
+  ingredient: {
+    fontSize: 16,
+    color: "#555",
+    marginVertical: 6,
+    lineHeight: 24, // More space between lines for readability
+    paddingLeft: 20, // Indented to show it's a list
+  },
+  url: {
+    fontSize: 16,
+    color: "#007BFF", // A clickable blue color for URLs
+    marginTop: 20,
+    textDecorationLine: "underline", // Underlines the URL for clarity
+    textAlign: "center", // Centers the URL for a clean look
+  },
+  error: {
+    fontSize: 18,
+    color: "red",
+    textAlign: "center",
+    marginTop: 20,
+    fontWeight: "bold", // Makes the error message stand out more
+  },
+  button: {
+    backgroundColor: "#007BFF", // Bright blue background for visibility
+    borderRadius: 5,
+    paddingVertical: 12,
+    paddingHorizontal: 40,
+    marginTop: 30,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 4, // Shadow effect for a raised button on Android
+  },
+  buttonText: {
+    color: "#fff", // White text for contrast
+    fontSize: 16,
+    fontWeight: "600", // Medium bold text for better readability
+  },
   modalOverlay: {
     flex: 1,
     justifyContent: "center",
