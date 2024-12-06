@@ -37,13 +37,30 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
 
   const saveRecipe = async () => {
     if (selectedMealType) {
+      let parsedIngredientLines;
+
+      // Attempt to parse the stringified ingredientLines
+      try {
+        parsedIngredientLines = JSON.parse(recipe.ingredientLines);
+      } catch (error) {
+        console.error("Error parsing ingredientLines:", error.message);
+        Alert.alert("Error", "Invalid ingredientLines format. Unable to save the recipe.");
+        return; // Stop execution if parsing fails
+      }
+
+      // Ensure the parsed data is an array
+      if (!Array.isArray(parsedIngredientLines)) {
+        console.error("Parsed ingredientLines is not an array.");
+        Alert.alert("Error", "The ingredientLines format is invalid.");
+        return;
+      }
+
+
       const recipeToSave = {
         label: recipe.label,
         image: recipe.image,
         url: recipe.url,
-        ingredientLines:  Array.isArray(recipe.ingredientLines)
-        ? recipe.ingredientLines
-        : [], // Ensure it’s an array
+        ingredientLines: parsedIngredientLines, // Use the parsed array
         calories: recipe.calories,
         mealType: selectedMealType,
       };
