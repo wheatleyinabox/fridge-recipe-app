@@ -85,10 +85,13 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
         <Text style={styles.mealType}>Meal Type: {recipe.mealType}</Text>
       </View>
       <Text style={styles.sectionTitle}>Ingredients:</Text>
-      {recipe.ingredientLines.map((ingredient: string, index: number) => (
-        <Text key={index} style={styles.ingredient}>
-          • {ingredient}
-        </Text>
+      {(typeof recipe.ingredientLines === "string"
+      ? JSON.parse(recipe.ingredientLines)
+      : recipe.ingredientLines
+      ).map((ingredient: string, index: number) => (
+      <Text key={index} style={styles.ingredient}>
+    • {ingredient}
+      </Text>
       ))}
       <TouchableOpacity onPress={() => handleLinkPress(recipe.url)}>
         <Text style={styles.url}>View Full Recipe</Text>
