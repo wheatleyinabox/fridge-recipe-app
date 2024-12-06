@@ -41,7 +41,9 @@ const RecipeDetail: React.FC<{ recipe: any; onClose: () => void }> = ({
         label: recipe.label,
         image: recipe.image,
         url: recipe.url,
-        ingredientLines: recipe.ingredientLines,
+        ingredientLines:  Array.isArray(recipe.ingredientLines)
+        ? recipe.ingredientLines
+        : [], // Ensure it’s an array
         calories: recipe.calories,
         mealType: selectedMealType,
       };
