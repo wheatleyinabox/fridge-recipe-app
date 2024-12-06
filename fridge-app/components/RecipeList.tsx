@@ -19,34 +19,42 @@ const RecipeList: React.FC<{ searchQuery: string }> = ({ searchQuery }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
 
-  useEffect(() => {
-    const fetchRecipes = async () => {
-      try {
-        const response = await fetch("http://10.110.251.114:5000/random-recipes/?count=20");
-        const json = await response.json();
-        const recipes = json.map((item: any) => item.recipe);
-        setData(recipes);
-      } catch (error) {
-        console.error("Error fetching recipes:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchRecipes = async (endpoint: string) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(endpoint);
+      const json = await response.json();
+      const recipes = json.map((item: any) => item.recipe);
+      setData(recipes);
+    } catch (error) {
+      console.error("Error fetching recipes:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    fetchRecipes();
+  useEffect(() => {
+    // Fetch random recipes initially
+    fetchRecipes("http://10.110.175.199:7000/random-recipes/?count=20");
   }, []);
 
-  const filteredData = data.filter((recipe) => {
-    return (
-      recipe.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      recipe.ingredientLines.some((ingredient: string) =>
-        ingredient.toLowerCase().includes(searchQuery.toLowerCase())
-      ) ||
-      recipe.mealType.some((meal: string) =>
-        meal.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    );
-  });
+  useEffect(() => {
+    const debounceFetch = setTimeout(() => {
+      if (searchQuery.trim() === "") {
+        // Fetch random recipes if search query is empty
+        fetchRecipes("http://10.110.251.114:7000/random-recipes/?count=20");
+      } else {
+        // Fetch recipes matching the search query
+        fetchRecipes(
+          `http://10.110.251.114:7000/recipes/${encodeURIComponent(
+            searchQuery
+          )}`
+        );
+      }
+    }, 500); // Debounce time in milliseconds
+
+    return () => clearTimeout(debounceFetch); // Cleanup debounce
+  }, [searchQuery]);
 
   const openModal = (recipe: any) => {
     setSelectedRecipe(recipe);
@@ -69,7 +77,7 @@ const RecipeList: React.FC<{ searchQuery: string }> = ({ searchQuery }) => {
   return (
     <View style={styles.container}>
       <MasonryList
-        data={filteredData}
+        data={data}
         keyExtractor={(item) => item.label}
         renderItem={({ item }) => (
           <View style={styles.cardContainer}>
