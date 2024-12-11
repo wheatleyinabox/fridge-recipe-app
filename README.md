@@ -6,6 +6,7 @@
 5. Create an Virtual Device within Android Studio's Virtual Device Manager (recommended: Android 15.0 VanillaIceCream)
 ### For Frontend...
 ```
+cd fridge-app
 npm install
 npm run android
 ```
