@@ -12,3 +12,11 @@
 
 ## Team & Developers
 - [@wheatleyinabox](https://www.github.com/wheatleyinabox)
+- [@rllov](https://github.com/rllov)
+- [@asyay86](https://github.com/Asyay86)
+- [@crystalle77](https://github.com/crystalle77)
+- [@Haj222](https://github.com/Haj222)
+- [@HaKh27](https://github.com/HaKh27)
+- [@joestrada1022](https://github.com/joestrada1022)
+- [@KevinLemon112](https://github.com/KevinLemon112)
+- [@richirey75](https://github.com/richirey75)
