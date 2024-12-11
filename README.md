@@ -7,12 +7,13 @@
 ### For Frontend...
 ```
 cd fridge-app
-npm install
+npm i
 npm run android
 ```
 ### For Backend...
 ```
 cd recipes
+npm i
 npm run start
 ```
 
